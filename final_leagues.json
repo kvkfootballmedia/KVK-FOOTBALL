@@ -1,0 +1,61 @@
+{
+    "England Premier League": [
+        {
+            "id": "86c31ec67833cb26",
+            "name": "England Premier League 2",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        }
+    ],
+    "Germany Bundesliga": [
+        {
+            "id": "3a625640737668e1",
+            "name": "Germany Bundesliga II",
+            "country": "DE",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "d84b517a590dec98",
+            "name": "Germany Bundesliga U19",
+            "country": "DE",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "a0d28d6b99d45e79",
+            "name": "Germany Bundesliga I",
+            "country": "DE",
+            "has_image": false,
+            "important": true
+        }
+    ],
+    "UEFA Champions League": [
+        {
+            "id": "d6a2463557a8e280",
+            "name": "UEFA Champions League Women",
+            "country": "EU",
+            "has_image": false,
+            "important": true
+        }
+    ],
+    "Spain Primera Liga": [
+        {
+            "id": "d621ea12d91a8473",
+            "name": "Spain Primera Liga",
+            "country": "ES",
+            "has_image": false,
+            "important": true
+        }
+    ],
+    "Italy Serie A": [
+        {
+            "id": "52df5453a0628c0a",
+            "name": "Italy Serie A",
+            "country": "IT",
+            "has_image": false,
+            "important": true
+        }
+    ]
+}

@@ -1,0 +1,27 @@
+{
+    "Bundesliga": [
+        {
+            "id": "3a625640737668e1",
+            "name": "Germany Bundesliga II",
+            "country": "DE",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "d84b517a590dec98",
+            "name": "Germany Bundesliga U19",
+            "country": "DE",
+            "has_image": false,
+            "important": false
+        }
+    ],
+    "Champions League": [
+        {
+            "id": "d6a2463557a8e280",
+            "name": "UEFA Champions League Women",
+            "country": "EU",
+            "has_image": false,
+            "important": true
+        }
+    ]
+}

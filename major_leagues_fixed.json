@@ -1,0 +1,697 @@
+{
+    "FR": [
+        {
+            "id": "aa5f8247e4696a12",
+            "name": "France U19 League",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "f0644ed72e7c6a5c",
+            "name": "France Ligue 1",
+            "country": "FR",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "4b91130e7adcbdd1",
+            "name": "France National",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "aa200be76c9c8653",
+            "name": "France CFA 2",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "a54c05f67a3c32bc",
+            "name": "France Division 1 Women",
+            "country": "FR",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "6b2fcdc884329586",
+            "name": "France Ligue 2",
+            "country": "FR",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "c4e35349a52e9450",
+            "name": "France Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "370792bf2b7f610f",
+            "name": "France U19 Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "5a748bb271096240",
+            "name": "France League Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "2a81687a80f5b076",
+            "name": "France -Division 2 Women",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "8bc76b1a2f583119",
+            "name": "France Cup Women",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "896d74c6755998d8",
+            "name": "France Ligue 1 Play-Offs",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "f5dd78d33f8dc2a3",
+            "name": "France Ligue 2 Play-Offs",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "8206ea77c1d07e2d",
+            "name": "France U19 League Women",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "b92a832ef645443d",
+            "name": "France Super Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "6a919c44cec33ca1",
+            "name": "France National 2",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "dd2895312feae07e",
+            "name": "France National 3",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "bd77229e3650ab73",
+            "name": "Gambardella Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "6585d2a286539d67",
+            "name": "France University League",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "16f6583c3c3c8ca5",
+            "name": "France Regional League",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "a1b14882c026c69d",
+            "name": "France Division 2 Women",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "2b89374a276f05a6",
+            "name": "France Gambardella Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "d53880947f6af4b5",
+            "name": "France U21 Cup",
+            "country": "FR",
+            "has_image": false,
+            "important": false
+        }
+    ],
+    "GB": [
+        {
+            "id": "7cece306412b8f5e",
+            "name": "Scotland Premier League Women",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "86c31ec67833cb26",
+            "name": "England Premier League 2",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "1d74db8e156c5c2a",
+            "name": "England Super League Women",
+            "country": "GB",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "20db571add0e98c2",
+            "name": "Wales Premier League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "56402d98ed6ab257",
+            "name": "England Championship Women",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "eb57e70ef2e7077e",
+            "name": "England Premier League",
+            "country": "GB",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "66cf8854b3c140e1",
+            "name": "England EFL Trophy",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "d654e676aeacf56d",
+            "name": "Scotland Premier U20 League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "3c2478eefd174f7a",
+            "name": "England National League South",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "b7fdc2a33ea75aef",
+            "name": "England Northern Premier League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "3bb0fa3f81f2790",
+            "name": "England National League North",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "3dfb3b3e0c689bb9",
+            "name": "England National League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "6fed6b3f56012bed",
+            "name": "England Southern League Premier",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "96860b92d421df21",
+            "name": "England League 1",
+            "country": "GB",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "8c50fe83dd0c026b",
+            "name": "Wales Cymru Alliance",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "7ced4ab26cfad2e6",
+            "name": "England U23 Development League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "6500d1deb00c5995",
+            "name": "Scotland Highland League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "fb0411c32fca34d8",
+            "name": "Scotland Lowland League",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "651c82ee593d0c3e",
+            "name": "Wales League Cup",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "fcb7dd430de1f47c",
+            "name": "England Reserve Matches",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "8af7a2c1ee2ede7e",
+            "name": "Scotland Development League West",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "3a2ce6384d6d50ef",
+            "name": "England Isthmian Division One South",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "90ce98044ec45523",
+            "name": "England Isthmian Division One North",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "b9997ead7dd86317",
+            "name": "Scotland Development League East",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "9acffaaff8693dfb",
+            "name": "Scotland Women FA Cup",
+            "country": "GB",
+            "has_image": false,
+            "important": false
+        }
+    ],
+    "ES": [
+        {
+            "id": "ed4e2b4541bc47e7",
+            "name": "Spain Tercera Group 12",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "3b51df22027b77fa",
+            "name": "Spain Tercera Group 5",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "a2549dac896cd7e6",
+            "name": "Spain Segunda B Group 4",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "814717d07d7700dd",
+            "name": "Spain Segunda B Group 1",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "403cbbe8e6445d94",
+            "name": "Spain Tercera Group 2",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "f923461b05bd7e01",
+            "name": "Spain Tercera Group 18",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "27a0d98a874d7086",
+            "name": "Spain Tercera Group 16",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "8370f1aaf5651a45",
+            "name": "Spain Tercera Group 1",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "e637af900cba6996",
+            "name": "Spain Segunda B Group 3",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "a4dde2c7b6b9804d",
+            "name": "Spain Segunda B Group 2",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "31cf0d94aa80f97e",
+            "name": "Spain Tercera Group 9",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "2e11a6f5e73b1cfa",
+            "name": "Spain Tercera Group 14",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "125002779dbad50d",
+            "name": "Spain Tercera Group 10",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "36adcbdfe01fe922",
+            "name": "Spain Tercera Group 7",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "6293db580a8e6dfd",
+            "name": "Spain Tercera Group 6",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "d7903b1f5131955e",
+            "name": "Spain Tercera Group 17",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "70cba29899bfb6ba",
+            "name": "Spain Tercera Group 4",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "f0c862478620788f",
+            "name": "Spain Tercera Group 15",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "d621ea12d91a8473",
+            "name": "Spain Primera Liga",
+            "country": "ES",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "67c9dd1d88c188a5",
+            "name": "Spain Tercera Group 3",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "98e9ec9460eff334",
+            "name": "Spain Tercera Group 13",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "97bf7ab8a5bec14e",
+            "name": "Spain Tercera Group 8",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "d204cef8963e865a",
+            "name": "Spain Copa Federacion",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "9daed707c2a18680",
+            "name": "Spain Copa del Rey",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "fefec6083caafec3",
+            "name": "Spain Tercera Group 11",
+            "country": "ES",
+            "has_image": false,
+            "important": false
+        }
+    ],
+    "IT": [
+        {
+            "id": "52df5453a0628c0a",
+            "name": "Italy Serie A",
+            "country": "IT",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "7343482548e0674b",
+            "name": "Italy Serie B",
+            "country": "IT",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "2ff3a9642c450e6d",
+            "name": "Italy Serie C Group C",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "7e38d8d1aedebe0f",
+            "name": "Italy Serie C Group A",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "5a452b19ed9a4a1e",
+            "name": "Italy Serie D Cup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "49d4a0e644f40208",
+            "name": "Italy Serie C Cup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "80b9dc9317d572ca",
+            "name": "Italy Serie C Group B",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "155cec53ea49113f",
+            "name": "Italy Serie D",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "8b6ed2bcc280b765",
+            "name": "Italy Campionato Primavera",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "df8b09e8e290f517",
+            "name": "Coppa Italia Women",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "618267e9e8023ee0",
+            "name": "Italy Campionato Nazionale",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "779606c036b9f13c",
+            "name": "Italy Primavera Cup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "11aaea470d777f5d",
+            "name": "Italy Amateur Cup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "89c78526e6df3915",
+            "name": "Italy Serie A Women",
+            "country": "IT",
+            "has_image": false,
+            "important": true
+        },
+        {
+            "id": "e3d01f09606f8be1",
+            "name": "Italy Primavera Supercup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "1d121e5b11762835",
+            "name": "Italy Promozione",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "e2e465c5e3a821ec",
+            "name": "Italy Super Cup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "dd55b2989c51a810",
+            "name": "Italy Eccellenza",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "a7bb4b2c48e6bffe",
+            "name": "Coppa Italia",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "8313cf68798a4193",
+            "name": "Italy Serie B Women",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "d97ab5d51b8994c1",
+            "name": "Italy Serie D Play-Offs",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "ecbfce52a4958885",
+            "name": "Italy Serie B Play-Offs",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "bfbad2b003523c63",
+            "name": "Italy Serie C Super Cup",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "90aba47090ad2f83",
+            "name": "Italy Serie C Play-Offs",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        },
+        {
+            "id": "561dfc67e1fba9e7",
+            "name": "Italy Youth Tournament - 80 mins play",
+            "country": "IT",
+            "has_image": false,
+            "important": false
+        }
+    ],
+    "DE": []
+}
