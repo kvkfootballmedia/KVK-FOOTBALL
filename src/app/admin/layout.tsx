@@ -5,6 +5,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
 import { LayoutDashboard, Users, FileText, LogOut, Shield } from 'lucide-react';
+import { NotificationProvider } from '@/context/NotificationContext';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -151,11 +152,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Administrative Content */}
-      <main className="flex-1 bg-gray-50/30 overflow-y-auto">
-        <div className="p-6 md:p-12">
-          {children}
-        </div>
-      </main>
+      <NotificationProvider>
+        <main className="flex-1 bg-gray-50/30 overflow-y-auto">
+          <div className="p-6 md:p-12">
+            {children}
+          </div>
+        </main>
+      </NotificationProvider>
     </div>
   );
 }

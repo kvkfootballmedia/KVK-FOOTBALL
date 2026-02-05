@@ -5,6 +5,8 @@ import { Post, ContentStatus, PostBlock, Tag, Category } from '@/types';
 import BlockEditor from './BlockEditor';
 import ImageUpload from './ImageUpload';
 import { Settings, Globe, Layout, ChevronRight, Trash2, Eye } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 interface ArticleFormProps {
   initialData?: Partial<Post>;
@@ -28,6 +30,8 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
 
   const [postBlocks, setPostBlocks] = useState<PostBlock[]>(initialData.post_blocks || []);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const { showNotification } = useNotification();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -37,7 +41,7 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
 
   const handleSubmit = async (status: ContentStatus) => {
     if ((!formData.title || !formData.slug) && status !== 'draft') {
-      alert('Titre et Slug obligatoires pour publier.');
+      showNotification('Titre et Slug obligatoires pour publier.', 'error');
       return;
     }
     
@@ -51,19 +55,23 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
       
       await onSave(payload);
     } catch (error) {
-      alert('Erreur lors de la sauvegarde.');
+      showNotification('Erreur lors de la sauvegarde.', 'error');
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const handleDeleteClick = async () => {
+  const handleDeleteClick = () => {
     if (!initialData.id || !onDelete) return;
-    if (confirm('Êtes-vous sûr de vouloir supprimer cet article ? Cette action est irréversible.')) {
-      setIsSubmitting(true);
-      await onDelete(initialData.id);
-      setIsSubmitting(false);
-    }
+    setShowDeleteConfirm(true);
+  };
+
+  const confirmDelete = async () => {
+    if (!initialData.id || !onDelete) return;
+    setShowDeleteConfirm(false);
+    setIsSubmitting(true);
+    await onDelete(initialData.id);
+    setIsSubmitting(false);
   };
 
   return (
@@ -249,6 +257,14 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
           </div>
         )}
       </div>
+
+      <ConfirmModal 
+        isOpen={showDeleteConfirm}
+        title="Suppression"
+        message="Voulez-vous vraiment supprimer cet article ? Cette action est définitive."
+        onConfirm={confirmDelete}
+        onCancel={() => setShowDeleteConfirm(false)}
+      />
     </div>
   );
 }

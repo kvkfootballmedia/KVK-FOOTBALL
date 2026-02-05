@@ -5,13 +5,16 @@ import { useRouter } from 'next/navigation';
 import { api } from '@/services/api';
 import { supabase } from '@/lib/supabaseClient';
 import { Profile, UserRole } from '@/types';
-import { UserPlus, Shield, User, Edit2, Trash2, X } from 'lucide-react';
+import { UserPlus, Shield, User, Edit2, Trash2, X, Copy } from 'lucide-react';
+import { useNotification } from '@/context/NotificationContext';
+import ConfirmModal from '@/components/ui/ConfirmModal';
 
 export default function IdentityManagementPage() {
   const [users, setUsers] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showAddModal, setShowAddModal] = useState(false);
+  const { showNotification } = useNotification();
   const router = useRouter();
 
   // New User Form State
@@ -28,6 +31,9 @@ export default function IdentityManagementPage() {
   // Generated Password State
   const [generatedPassword, setGeneratedPassword] = useState<string | null>(null);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  // Delete Confirmation State
+  const [deleteData, setDeleteData] = useState<{ id: string; name: string } | null>(null);
 
   // Generate a random secure password
   const generatePassword = () => {
@@ -108,6 +114,7 @@ export default function IdentityManagementPage() {
       setGeneratedPassword(password);
       setShowPasswordModal(true);
       setShowAddModal(false);
+      showNotification('Nouveau profil créé avec succès !', 'success');
       
       // Reset form
       setNewUser({
@@ -119,7 +126,7 @@ export default function IdentityManagementPage() {
       fetchUsers();
     } catch (err: any) {
       console.error(err);
-      alert('Erreur lors de la création: ' + err.message);
+      showNotification('Erreur lors de la création: ' + err.message, 'error');
     }
   };
 
@@ -141,35 +148,38 @@ export default function IdentityManagementPage() {
 
       if (error) throw error;
 
-      alert('Utilisateur mis à jour avec succès.');
+      showNotification('Mise à jour effectuée.', 'success');
       setShowEditModal(false);
       setEditUser(null);
       fetchUsers();
     } catch (err: any) {
       console.error(err);
-      alert('Erreur lors de la mise à jour: ' + err.message);
+      showNotification('Erreur lors de la mise à jour: ' + err.message, 'error');
     }
   };
 
-  const handleDeleteUser = async (userId: string, userName: string) => {
-    if (!confirm(`Êtes-vous sûr de vouloir supprimer ${userName} ?`)) {
-      return;
-    }
+  const handleDeleteUser = (userId: string, userName: string) => {
+    setDeleteData({ id: userId, name: userName });
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteData) return;
 
     try {
       // Delete from profiles table (cascade will handle related data)
       const { error } = await supabase
         .from('profiles')
         .delete()
-        .eq('id', userId);
+        .eq('id', deleteData.id);
 
       if (error) throw error;
 
-      alert('Utilisateur supprimé avec succès.');
+      showNotification('Compte collaborateur supprimé.', 'success');
+      setDeleteData(null);
       fetchUsers();
     } catch (err: any) {
       console.error(err);
-      alert('Erreur lors de la suppression: ' + err.message);
+      showNotification('Erreur lors de la suppression: ' + err.message, 'error');
     }
   };
 
@@ -379,11 +389,11 @@ export default function IdentityManagementPage() {
                   <button
                     onClick={() => {
                       navigator.clipboard.writeText(generatedPassword);
-                      alert('Mot de passe copié !');
+                      showNotification('Mot de passe copié !', 'info');
                     }}
-                    className="px-6 py-3 bg-gray-900 text-white font-black uppercase text-xs hover:bg-black transition-all"
+                    className="px-6 py-3 bg-gray-900 text-white font-black uppercase text-xs hover:bg-black transition-all flex items-center gap-2"
                   >
-                    Copier
+                    <Copy className="w-4 h-4" /> Copier
                   </button>
                 </div>
               </div>
@@ -408,6 +418,16 @@ export default function IdentityManagementPage() {
           </div>
         </div>
       )}
+
+      {/* Reusable Confirm Modal */}
+      <ConfirmModal 
+        isOpen={!!deleteData}
+        title="Désactivation"
+        message={`Voulez-vous vraiment retirer l'accès à ${deleteData?.name} ? Cette action est irréversible.`}
+        confirmLabel="Révoquer l'accès"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteData(null)}
+      />
     </div>
   );
 }

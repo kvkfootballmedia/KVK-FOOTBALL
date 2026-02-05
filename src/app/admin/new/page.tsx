@@ -7,11 +7,13 @@ import ArticleForm from '@/components/admin/ArticleForm';
 import { ChevronLeft } from 'lucide-react';
 import { api } from '@/services/api';
 import { supabase } from '@/lib/supabaseClient';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function NewArticlePage() {
   const router = useRouter();
   const [userRole, setUserRole] = useState<'admin' | 'editor' | 'author'>('author');
   const [sessionToken, setSessionToken] = useState<string | null>(null);
+  const { showNotification } = useNotification();
   const [categories, setCategories] = useState<any[]>([]);
 
   useEffect(() => {
@@ -45,7 +47,7 @@ export default function NewArticlePage() {
 
   const handleSave = async (data: any): Promise<void> => {
     if (!sessionToken) {
-      alert('Session expirée. Veuillez vous reconnecter.');
+      showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
       return;
     }
     
@@ -54,11 +56,12 @@ export default function NewArticlePage() {
       const savedPost = await api.posts.save(data);
       // ✅ SUCCESS: Redirect to edit page to avoid "Duplicate Slug" on re-save
       if (savedPost && savedPost.id) {
+         showNotification('Article enregistré !', 'success');
          router.push(`/admin/edit/${savedPost.id}`);
       }
     } catch (error) {
       console.error(error);
-      alert("Erreur: Ce titre/slug existe probablement déjà.");
+      showNotification("Erreur: Ce titre/slug existe probablement déjà.", 'error');
     }
   };
 

@@ -3,6 +3,7 @@
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { api } from '@/services/api';
+import { useNotification } from '@/context/NotificationContext';
 
 interface ImageUploadProps {
   value?: string | null;
@@ -15,6 +16,7 @@ export default function ImageUpload({ value, onChange, className = "", label = "
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { showNotification } = useNotification();
 
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
@@ -44,17 +46,17 @@ export default function ImageUpload({ value, onChange, className = "", label = "
 
   const handleFile = async (file: File) => {
     if (!file.type.startsWith('image/')) {
-      alert("Veuillez sélectionner une image valide.");
+      showNotification("Veuillez sélectionner une image valide.", 'error');
       return;
     }
 
     setIsUploading(true);
     try {
       const url = await api.storage.upload(file);
-      onChange(url);
+      showNotification('Image téléchargée avec succès.', 'success');
     } catch (error) {
       console.error("Upload error:", error);
-      alert("Erreur lors de l'upload de l'image.");
+      showNotification("Erreur lors de l'upload de l'image.", 'error');
     } finally {
       setIsUploading(false);
     }

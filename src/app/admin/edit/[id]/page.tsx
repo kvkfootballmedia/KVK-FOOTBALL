@@ -7,6 +7,7 @@ import ArticleForm from '@/components/admin/ArticleForm';
 import { ChevronLeft, Loader2 } from 'lucide-react';
 import { api } from '@/services/api';
 import { supabase } from '@/lib/supabaseClient';
+import { useNotification } from '@/context/NotificationContext';
 
 export default function EditArticlePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
@@ -16,6 +17,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const [isLoading, setIsLoading] = useState(true);
   const [userRole, setUserRole] = useState<'admin' | 'editor' | 'author'>('author');
   const [categories, setCategories] = useState<any[]>([]);
+  const { showNotification } = useNotification();
 
   useEffect(() => {
     const initPage = async () => {
@@ -23,7 +25,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       const { data: { session } } = await supabase.auth.getSession();
       
       if (!session) {
-        alert('Session expirée. Veuillez vous reconnecter.');
+        showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
         router.push('/admin/login');
         return;
       }
@@ -95,11 +97,11 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const handleDelete = async (postId: string) => {
     try {
       await api.posts.delete(postId);
-      alert('Article supprimé.');
+      showNotification('Article supprimé avec succès.', 'success');
       router.push('/admin');
     } catch (err) {
       console.error('Error deleting:', err);
-      alert('Erreur lors de la suppression.');
+      showNotification('Erreur lors de la suppression.', 'error');
     }
   };
 
