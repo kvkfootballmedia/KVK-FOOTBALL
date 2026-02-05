@@ -87,7 +87,7 @@ export default function NewsFeed() {
         </h2>
 
         {gridPosts.length > 0 ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 md:gap-y-16">
             {gridPosts.map(post => (
               <div key={post.id}>
                 <PostCard post={post} />

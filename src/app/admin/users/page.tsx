@@ -186,85 +186,86 @@ export default function IdentityManagementPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="flex justify-between items-end mb-16 border-b-4 border-gray-900 pb-8">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 border-b-4 border-gray-900 pb-8 gap-6">
         <div>
-          <span className="text-xs font-black uppercase tracking-[0.4em] text-primary">Contrôle d'Accès</span>
-          <h1 className="text-5xl font-black uppercase tracking-tighter italic">Gestion des Identités</h1>
+          <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-primary">Contrôle d'Accès</span>
+          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic leading-none">Gestion des Identités</h1>
         </div>
         <button 
           onClick={() => setShowAddModal(true)}
-          className="bg-gray-900 text-white px-8 py-4 font-black uppercase tracking-widest text-[11px] hover:bg-primary transition-all shadow-xl flex items-center gap-3"
+          className="w-full md:w-auto bg-gray-900 text-white px-6 md:px-8 py-4 md:py-4 font-black uppercase tracking-widest text-[10px] md:text-[11px] hover:bg-primary transition-all shadow-xl flex items-center justify-center gap-3"
         >
           <UserPlus className="w-4 h-4" /> Recruter un collaborateur
         </button>
       </div>
 
       <div className="bg-white border border-gray-100 shadow-2xl rounded-sm overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-gray-50 border-b border-gray-100">
-            <tr className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
-              <th className="px-8 py-6">Profil</th>
-              <th className="px-8 py-6">Rôle</th>
-              <th className="px-8 py-6">Email</th>
-              <th className="px-8 py-6 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-50">
-            {users.map((u) => (
-              <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
-                <td className="px-8 py-6">
-                  <div className="flex items-center gap-4">
-                    <div className="w-10 h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-black text-xs uppercase">
-                      {(u.full_name || u.email || 'U').charAt(0)}
-                    </div>
-                    <span className="font-black text-lg tracking-tight uppercase italic">{u.full_name || u.email || 'Unknown User'}</span>
-                  </div>
-                </td>
-                <td className="px-8 py-6">
-                  <span className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 w-fit ${
-                    u.role === 'admin' ? 'bg-black text-white' : 
-                    u.role === 'editor' ? 'bg-primary text-white shadow-[0_4px_15px_rgba(196,18,46,0.3)]' : 
-                    'bg-gray-100 text-gray-500'
-                  }`}>
-                    {u.role === 'admin' && <Shield className="w-3 h-3" />}
-                    {u.role === 'editor' && <Edit2 className="w-3 h-3" />}
-                    {u.role === 'author' && <User className="w-3 h-3" />}
-                    {u.role}
-                  </span>
-                </td>
-                <td className="px-8 py-6 font-mono text-xs text-gray-400">{u.email}</td>
-                <td className="px-8 py-6 text-right">
-                  <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
-                      onClick={() => handleEditUser(u)}
-                      className="p-2 text-gray-400 hover:text-gray-900 transition-colors"
-                      title="Modifier"
-                    >
-                      <Edit2 className="w-4 h-4" />
-                    </button>
-                    <button 
-                      onClick={() => handleDeleteUser(u.id, u.full_name || u.email || '')}
-                      className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                      title="Supprimer"
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full text-left min-w-[600px] md:min-w-0">
+            <thead className="bg-gray-50 border-b border-gray-100">
+              <tr className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
+                <th className="px-4 md:px-8 py-4 md:py-6">Profil</th>
+                <th className="px-4 md:px-8 py-4 md:py-6">Rôle</th>
+                <th className="px-4 md:px-8 py-4 md:py-6">Email</th>
+                <th className="px-4 md:px-8 py-4 md:py-6 text-right">Actions</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-50">
+              {users.map((u) => (
+                <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+                  <td className="px-4 md:px-8 py-4 md:py-6">
+                    <div className="flex items-center gap-3 md:gap-4">
+                      <div className="shrink-0 w-8 h-8 md:w-10 md:h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-black text-[10px] md:text-xs uppercase">
+                        {(u.full_name || u.email || 'U').charAt(0)}
+                      </div>
+                      <span className="font-black text-sm md:text-lg tracking-tight uppercase italic truncate max-w-[120px] md:max-w-none">{u.full_name || u.email || 'Unknown User'}</span>
+                    </div>
+                  </td>
+                  <td className="px-4 md:px-8 py-4 md:py-6">
+                    <span className={`px-2.5 md:px-4 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 w-fit ${
+                      u.role === 'admin' ? 'bg-black text-white' : 
+                      u.role === 'editor' ? 'bg-primary text-white shadow-[0_4px_15px_rgba(196,18,46,0.3)]' : 
+                      'bg-gray-100 text-gray-500'
+                    }`}>
+                      {u.role === 'admin' && <Shield className="w-3 h-3" />}
+                      {u.role === 'editor' && <Edit2 className="w-3 h-3" />}
+                      {u.role === 'author' && <User className="w-3 h-3" />}
+                      {u.role}
+                    </span>
+                  </td>
+                  <td className="px-4 md:px-8 py-4 md:py-6 font-mono text-[10px] text-gray-400 truncate max-w-[120px] md:max-w-none">{u.email}</td>
+                  <td className="px-4 md:px-8 py-4 md:py-6 text-right">
+                    <div className="flex justify-end gap-1 md:gap-2 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button 
+                        onClick={() => handleEditUser(u)}
+                        className="p-2 text-gray-400 hover:text-gray-900 transition-colors border border-gray-50 md:border-transparent hover:border-gray-100 rounded-full"
+                        title="Modifier"
+                      >
+                        <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                      </button>
+                      <button 
+                        onClick={() => handleDeleteUser(u.id, u.full_name || u.email || '')}
+                        className="p-2 text-gray-400 hover:text-red-600 transition-colors border border-gray-50 md:border-transparent hover:border-red-100 rounded-full"
+                        title="Supprimer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Add User Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg shadow-2xl rounded-sm p-12 relative animate-in fade-in zoom-in duration-300">
-            <button onClick={() => setShowAddModal(false)} className="absolute top-8 right-8 text-gray-400 hover:text-black">
+          <div className="bg-white w-full max-w-lg shadow-2xl rounded-sm p-6 md:p-12 relative animate-in fade-in zoom-in duration-300 overflow-y-auto max-h-[90vh]">
+            <button onClick={() => setShowAddModal(false)} className="absolute top-6 right-6 md:top-8 md:right-8 text-gray-400 hover:text-black">
               <X className="w-6 h-6" />
             </button>
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic mb-8 border-b-2 border-gray-900 pb-4">Nouveau Profil</h2>
+            <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tighter italic mb-8 border-b-2 border-gray-900 pb-4">Nouveau Profil</h2>
             <form onSubmit={handleCreateUser} className="space-y-6">
               <div className="space-y-2">
                 <label className="text-[10px] font-black uppercase tracking-widest text-gray-400">Nom Complet</label>
@@ -282,7 +283,7 @@ export default function IdentityManagementPage() {
                   <option value="admin">Administrateur (contrôle total)</option>
                 </select>
               </div>
-              <button type="submit" className="w-full py-5 bg-gray-900 text-white font-black uppercase tracking-widest text-xs hover:bg-primary transition-all shadow-xl mt-4">
+              <button type="submit" className="w-full py-4 md:py-5 bg-gray-900 text-white font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-primary transition-all shadow-xl mt-4">
                 Enregistrer le collaborateur
               </button>
             </form>
@@ -293,13 +294,13 @@ export default function IdentityManagementPage() {
       {/* Edit User Modal */}
       {showEditModal && editUser && (
         <div className="fixed inset-0 bg-gray-900/40 backdrop-blur-sm z-[200] flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg shadow-2xl rounded-sm p-12 relative animate-in fade-in zoom-in duration-300">
-            <button onClick={() => { setShowEditModal(false); setEditUser(null); }} className="absolute top-8 right-8 text-gray-400 hover:text-black">
+          <div className="bg-white w-full max-w-lg shadow-2xl rounded-sm p-6 md:p-12 relative animate-in fade-in zoom-in duration-300 overflow-y-auto max-h-[90vh]">
+            <button onClick={() => { setShowEditModal(false); setEditUser(null); }} className="absolute top-6 right-6 md:top-8 md:right-8 text-gray-400 hover:text-black">
               <X className="w-6 h-6" />
             </button>
 
-            <h2 className="text-4xl font-black uppercase tracking-tighter mb-8 border-b-4 border-gray-900 pb-4 inline-block">
-              Modifier l'utilisateur
+            <h2 className="text-2xl md:text-4xl font-black uppercase tracking-tighter mb-8 border-b-4 border-gray-900 pb-4 inline-block">
+              Modifier
             </h2>
 
             <form onSubmit={handleUpdateUser} className="space-y-8 mt-10">
@@ -345,7 +346,7 @@ export default function IdentityManagementPage() {
 
               <button
                 type="submit"
-                className="w-full py-5 bg-gray-900 text-white font-black uppercase tracking-[0.3em] text-xs hover:bg-black transition-all shadow-xl"
+                className="w-full py-4 md:py-5 bg-gray-900 text-white font-black uppercase tracking-[0.3em] text-[10px] md:text-xs hover:bg-black transition-all shadow-xl"
               >
                 Mettre à jour
               </button>

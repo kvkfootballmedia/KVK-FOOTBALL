@@ -85,37 +85,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   return (
     <div className="min-h-screen bg-white flex flex-col md:flex-row">
       {/* Admin Sidebar Navigation */}
-      <aside className="w-full md:w-72 bg-gray-900 text-white flex flex-col p-8 border-r border-gray-900">
-        <div className="mb-12">
-          <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary block mb-2">Terminal</span>
-          <h2 className="text-2xl font-black uppercase tracking-tighter italic">KVK Rédaction</h2>
+      <aside className="w-full md:w-72 bg-gray-900 text-white flex flex-col p-6 md:p-8 border-r border-gray-900 shrink-0">
+        <div className="mb-8 md:mb-12">
+          <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-primary block mb-1 md:mb-2">Terminal</span>
+          <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter italic">KVK Rédaction</h2>
         </div>
 
-        <nav className="flex-1 space-y-2">
+        <nav className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
           <Link 
             href="/admin" 
-            className={`flex items-center gap-4 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${pathname === '/admin' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
-            <LayoutDashboard className="w-4 h-4" /> Dashboard
+            <LayoutDashboard className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Dashboard
           </Link>
           <Link 
             href="/admin/new" 
-            className={`flex items-center gap-4 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${pathname === '/admin/new' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/new' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
-            <FileText className="w-4 h-4" /> Nouvel Article
+            <FileText className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Nouveau
           </Link>
           
           {user?.role === 'admin' && (
             <Link 
               href="/admin/users" 
-              className={`flex items-center gap-4 px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all ${pathname === '/admin/users' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/users' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
             >
-              <Users className="w-4 h-4" /> Identités Staff
+              <Users className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Staff
             </Link>
           )}
         </nav>
 
-        <div className="mt-auto pt-8 border-t border-white/10">
+        <div className="hidden md:block mt-auto pt-8 border-t border-white/10">
           <div className="flex items-center gap-4 mb-8">
              <div className="w-10 h-10 bg-primary flex items-center justify-center font-black text-xs uppercase italic">
                 {user?.full_name?.charAt(0)}
@@ -135,11 +135,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             <LogOut className="w-4 h-4" /> Déconnexion
           </button>
         </div>
+        
+        {/* Mobile logout and profile (compact) */}
+        <div className="md:hidden flex items-center justify-between pt-4 border-t border-white/10">
+           <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-primary flex items-center justify-center font-black text-[9px] uppercase italic">
+                 {user?.full_name?.charAt(0)}
+              </div>
+              <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">{user?.full_name?.split(' ')[0]}</span>
+           </div>
+           <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500">
+              <LogOut className="w-4 h-4" />
+           </button>
+        </div>
       </aside>
 
       {/* Main Administrative Content */}
       <main className="flex-1 bg-gray-50/30 overflow-y-auto">
-        <div className="p-8 md:p-12">
+        <div className="p-6 md:p-12">
           {children}
         </div>
       </main>
