@@ -1,5 +1,5 @@
 -- ============================================================
--- KVK FOOTBALL — SUPABASE (Postgres) — SCHEMA FINAL
+-- KVK FOOTBALL — SUPABASE (Postgres) — SCHEMA COMPLET
 -- Tables + triggers + indexes + RLS (admin/editor/author)
 -- ============================================================
 
@@ -23,7 +23,7 @@ begin
 end;
 $$;
 
--- Récupère le rôle depuis profiles (SECURITY DEFINER pour éviter le casse-tête RLS)
+-- Récupère le rôle depuis profiles (SECURITY DEFINER pour éviter le RLS)
 create or replace function public.current_role()
 returns text
 language sql
@@ -73,10 +73,12 @@ create table if not exists public.profiles (
   role text not null default 'author' check (role in ('admin','editor','author')),
   avatar_url text,
   bio text,
+  twitter_url text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
+drop trigger if exists trg_profiles_updated_at on public.profiles;
 create trigger trg_profiles_updated_at
 before update on public.profiles
 for each row execute function public.set_updated_at();
@@ -104,40 +106,220 @@ for each row execute procedure public.handle_new_user();
 -- 2.2 Categories
 create table if not exists public.categories (
   id uuid primary key default gen_random_uuid(),
-  name text not null,
+  name text not null unique,
   slug text not null unique,
   description text,
+  icon_url text,
+  color_hex text default '#000000',
+  sort_order int default 0,
   created_at timestamptz not null default now()
 );
 
 -- 2.3 Tags
 create table if not exists public.tags (
   id uuid primary key default gen_random_uuid(),
-  name text not null,
+  name text not null unique,
   slug text not null unique,
   created_at timestamptz not null default now()
 );
 
--- 2.4 Posts
+-- 2.4 Countries (Pays)
+create table if not exists public.countries (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  code text not null unique check (length(code) = 2),
+  flag_url text,
+  created_at timestamptz not null default now()
+);
+
+-- 2.5 Competitions (Compétitions)
+create table if not exists public.competitions (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  slug text not null unique,
+  competition_type text not null check (competition_type in ('league','cup','international','tournament')),
+  country_id uuid references public.countries(id) on delete set null,
+  season int,
+  logo_url text,
+  description text,
+  is_active boolean default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_competitions_updated_at on public.competitions;
+create trigger trg_competitions_updated_at
+before update on public.competitions
+for each row execute function public.set_updated_at();
+
+-- 2.6 Teams (Équipes)
+create table if not exists public.teams (
+  id uuid primary key default gen_random_uuid(),
+  name text not null unique,
+  slug text not null unique,
+  country_id uuid references public.countries(id) on delete set null,
+  is_national boolean default false,
+  logo_url text,
+  founded_year int,
+  league text,
+  website_url text,
+  description text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_teams_updated_at on public.teams;
+create trigger trg_teams_updated_at
+before update on public.teams
+for each row execute function public.set_updated_at();
+
+-- 2.7 Players (Joueurs)
+create table if not exists public.players (
+  id uuid primary key default gen_random_uuid(),
+  name text not null,
+  slug text not null unique,
+  country_id uuid references public.countries(id) on delete set null,
+  position text check (position in ('GK','DEF','MID','FWD','MULTI')),
+  birth_date date,
+  photo_url text,
+  preferred_foot text check (preferred_foot in ('left','right','both')),
+  height_cm int,
+  weight_kg int,
+  jersey_number int,
+  current_team_id uuid references public.teams(id) on delete set null,
+  market_value_millions numeric,
+  international_caps int default 0,
+  international_goals int default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_players_updated_at on public.players;
+create trigger trg_players_updated_at
+before update on public.players
+for each row execute function public.set_updated_at();
+
+-- 2.8 Matches (Rencontres)
+create table if not exists public.matches (
+  id uuid primary key default gen_random_uuid(),
+  competition_id uuid not null references public.competitions(id) on delete cascade,
+  home_team_id uuid not null references public.teams(id) on delete cascade,
+  away_team_id uuid not null references public.teams(id) on delete cascade,
+  match_date timestamptz not null,
+  status text not null default 'scheduled' check (status in ('scheduled','live','finished','postponed','cancelled')),
+  home_goals int,
+  away_goals int,
+  location text,
+  attendance int,
+  referee_name text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_matches_updated_at on public.matches;
+create trigger trg_matches_updated_at
+before update on public.matches
+for each row execute function public.set_updated_at();
+
+-- 2.9 Player Match Stats (Statistiques de joueur par match)
+create table if not exists public.player_match_stats (
+  id uuid primary key default gen_random_uuid(),
+  player_id uuid not null references public.players(id) on delete cascade,
+  match_id uuid not null references public.matches(id) on delete cascade,
+  team_id uuid not null references public.teams(id) on delete cascade,
+  position text check (position in ('GK','DEF','MID','FWD','BENCH')),
+  goals int default 0,
+  assists int default 0,
+  shots_on_target int default 0,
+  passes_completed int default 0,
+  pass_accuracy numeric,
+  tackles int default 0,
+  interceptions int default 0,
+  yellow_cards int default 0,
+  red_cards int default 0,
+  minutes_played int default 0,
+  rating numeric,
+  created_at timestamptz not null default now()
+);
+
+-- 2.10 Standings (Classement)
+create table if not exists public.standings (
+  id uuid primary key default gen_random_uuid(),
+  competition_id uuid not null references public.competitions(id) on delete cascade,
+  team_id uuid not null references public.teams(id) on delete cascade,
+  position int,
+  matches_played int default 0,
+  wins int default 0,
+  draws int default 0,
+  losses int default 0,
+  goals_for int default 0,
+  goals_against int default 0,
+  goal_difference int default 0,
+  points int default 0,
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_standings_updated_at on public.standings;
+create trigger trg_standings_updated_at
+before update on public.standings
+for each row execute function public.set_updated_at();
+
+-- 2.11 Story Groups
+create table if not exists public.story_groups (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  cover_image_url text not null,
+  is_active boolean default true,
+  sort_order int default 0,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz
+);
+
+-- 2.12 Stories
+create table if not exists public.stories (
+  id uuid primary key default gen_random_uuid(),
+  group_id uuid not null references public.story_groups(id) on delete cascade,
+  media_type text not null check (media_type in ('image','video')),
+  media_url text not null,
+  title text,
+  body_text text,
+  link_url text,
+  sort_order int not null default 0,
+  created_at timestamptz not null default now()
+);
+
+-- 2.13 Posts (Articles)
 create table if not exists public.posts (
   id uuid primary key default gen_random_uuid(),
   title text not null,
   slug text not null unique,
   excerpt text,
-  featured_image_url text,
+  featured_image text, -- Modifié de featured_image_url
   status text not null default 'draft' check (status in ('draft','review','published','archived')),
   author_id uuid not null references public.profiles(id) on delete restrict,
   category_id uuid references public.categories(id) on delete set null,
+  related_team_id uuid references public.teams(id) on delete set null,
+  related_player_id uuid references public.players(id) on delete set null,
+  related_match_id uuid references public.matches(id) on delete set null,
   published_at timestamptz,
+  is_featured boolean default false,
+  view_count int not null default 0,
+  like_count int not null default 0,
+  reading_time int,
+  meta_title text,
+  meta_description text,
+  featured_image_focal_x double precision default 50,
+  featured_image_focal_y double precision default 50,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
+drop trigger if exists trg_posts_updated_at on public.posts;
 create trigger trg_posts_updated_at
 before update on public.posts
 for each row execute function public.set_updated_at();
 
--- 2.5 Post <-> Tags (N-N)
+-- 2.14 Post Tags (N-N)
 create table if not exists public.post_tags (
   post_id uuid not null references public.posts(id) on delete cascade,
   tag_id uuid not null references public.tags(id) on delete cascade,
@@ -145,292 +327,235 @@ create table if not exists public.post_tags (
   primary key (post_id, tag_id)
 );
 
--- 2.6 Post Blocks (éditeur multi-blocs)
--- type: text | image | embed | quote etc.
--- data: JSONB (ex: { "html": "..."} ou { "url": "...", "alt": "..."} )
+-- 2.15 Post Blocks (Editeur de blocs)
 create table if not exists public.post_blocks (
   id uuid primary key default gen_random_uuid(),
   post_id uuid not null references public.posts(id) on delete cascade,
-  type text not null check (type in ('text','image','embed','quote','gallery')),
-  data jsonb not null default '{}'::jsonb,
+  block_type text not null check (block_type in ('paragraph','heading','image','quote','list','embed','html')),
+  content jsonb not null default '{}'::jsonb,
   caption text,
-  sort_order int not null,
+  position int not null,
   created_at timestamptz not null default now()
 );
 
+-- 2.16 Comments (Commentaires)
+create table if not exists public.comments (
+  id uuid primary key default gen_random_uuid(),
+  post_id uuid not null references public.posts(id) on delete cascade,
+  author_id uuid not null references public.profiles(id) on delete cascade,
+  parent_comment_id uuid references public.comments(id) on delete cascade,
+  content text not null,
+  status text not null default 'pending' check (status in ('pending','approved','rejected')),
+  like_count int not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+drop trigger if exists trg_comments_updated_at on public.comments;
+create trigger trg_comments_updated_at
+before update on public.comments
+for each row execute function public.set_updated_at();
+
 -- ============================================================
--- 3) Indexes (perf)
+-- 3) Indexes
 -- ============================================================
 
 create index if not exists idx_posts_status_published_at on public.posts (status, published_at desc);
 create index if not exists idx_posts_author_id on public.posts (author_id);
 create index if not exists idx_posts_category_id on public.posts (category_id);
-
 create index if not exists idx_post_tags_tag_id on public.post_tags (tag_id);
-create index if not exists idx_post_blocks_post_sort on public.post_blocks (post_id, sort_order);
-
--- Slugs: already unique => implicit index via UNIQUE
+create index if not exists idx_post_blocks_post_sort on public.post_blocks (post_id, position);
+create index if not exists idx_comments_post_id on public.comments (post_id);
+create index if not exists idx_matches_date on public.matches (match_date desc);
 
 -- ============================================================
 -- 4) RLS
 -- ============================================================
 
-alter table public.profiles    enable row level security;
-alter table public.categories  enable row level security;
-alter table public.tags        enable row level security;
-alter table public.posts       enable row level security;
-alter table public.post_tags   enable row level security;
-alter table public.post_blocks enable row level security;
+alter table public.profiles          enable row level security;
+alter table public.categories        enable row level security;
+alter table public.tags              enable row level security;
+alter table public.countries         enable row level security;
+alter table public.competitions      enable row level security;
+alter table public.teams             enable row level security;
+alter table public.players           enable row level security;
+alter table public.matches           enable row level security;
+alter table public.player_match_stats enable row level security;
+alter table public.standings         enable row level security;
+alter table public.story_groups      enable row level security;
+alter table public.stories           enable row level security;
+alter table public.posts             enable row level security;
+alter table public.post_tags         enable row level security;
+alter table public.post_blocks       enable row level security;
+alter table public.comments          enable row level security;
 
 -- -------------------------
 -- PROFILES
 -- -------------------------
-
 drop policy if exists "profiles_select_public" on public.profiles;
-create policy "profiles_select_public"
-on public.profiles
-for select
-using (true);
+create policy "profiles_select_public" on public.profiles for select using (true);
 
 drop policy if exists "profiles_update_own" on public.profiles;
-create policy "profiles_update_own"
-on public.profiles
-for update
-to authenticated
-using (id = auth.uid())
-with check (id = auth.uid());
+create policy "profiles_update_own" on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
--- (optionnel) bloquer insert/delete depuis client
 drop policy if exists "profiles_insert_none" on public.profiles;
-create policy "profiles_insert_none"
-on public.profiles
-for insert
-to authenticated
-with check (false);
+create policy "profiles_insert_none" on public.profiles for insert to authenticated with check (false);
 
 drop policy if exists "profiles_delete_none" on public.profiles;
-create policy "profiles_delete_none"
-on public.profiles
-for delete
-to authenticated
-using (false);
+create policy "profiles_delete_none" on public.profiles for delete to authenticated using (false);
 
 -- -------------------------
 -- CATEGORIES
 -- -------------------------
-
 drop policy if exists "categories_select_public" on public.categories;
-create policy "categories_select_public"
-on public.categories
-for select
-using (true);
+create policy "categories_select_public" on public.categories for select using (true);
 
 drop policy if exists "categories_write_editor_admin" on public.categories;
-create policy "categories_write_editor_admin"
-on public.categories
-for all
-to authenticated
-using (public.can_manage_content())
-with check (public.can_manage_content());
+create policy "categories_write_editor_admin" on public.categories for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
 
 -- -------------------------
 -- TAGS
 -- -------------------------
-
 drop policy if exists "tags_select_public" on public.tags;
-create policy "tags_select_public"
-on public.tags
-for select
-using (true);
+create policy "tags_select_public" on public.tags for select using (true);
 
 drop policy if exists "tags_write_editor_admin" on public.tags;
-create policy "tags_write_editor_admin"
-on public.tags
-for all
-to authenticated
-using (public.can_manage_content())
-with check (public.can_manage_content());
+create policy "tags_write_editor_admin" on public.tags for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+-- -------------------------
+-- LEAGUE / FOOT DATA (COUNTRIES, COMPETITIONS, TEAMS, PLAYERS, MATCHES, STATS, STANDINGS)
+-- -------------------------
+drop policy if exists "countries_select_public" on public.countries;
+create policy "countries_select_public" on public.countries for select using (true);
+
+drop policy if exists "competitions_select_public" on public.competitions;
+create policy "competitions_select_public" on public.competitions for select using (true);
+
+drop policy if exists "teams_select_public" on public.teams;
+create policy "teams_select_public" on public.teams for select using (true);
+
+drop policy if exists "players_select_public" on public.players;
+create policy "players_select_public" on public.players for select using (true);
+
+drop policy if exists "matches_select_public" on public.matches;
+create policy "matches_select_public" on public.matches for select using (true);
+
+drop policy if exists "stats_select_public" on public.player_match_stats;
+create policy "stats_select_public" on public.player_match_stats for select using (true);
+
+drop policy if exists "standings_select_public" on public.standings;
+create policy "standings_select_public" on public.standings for select using (true);
+
+-- Droit d'écriture pour l'équipe admin / éditeur sur les données sportives
+drop policy if exists "sports_write_admin_editor" on public.countries;
+create policy "sports_write_admin_editor" on public.countries for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "sports_write_admin_editor" on public.competitions;
+create policy "sports_write_admin_editor" on public.competitions for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "sports_write_admin_editor" on public.teams;
+create policy "sports_write_admin_editor" on public.teams for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "sports_write_admin_editor" on public.players;
+create policy "sports_write_admin_editor" on public.players for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "sports_write_admin_editor" on public.matches;
+create policy "sports_write_admin_editor" on public.matches for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "sports_write_admin_editor" on public.player_match_stats;
+create policy "sports_write_admin_editor" on public.player_match_stats for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "sports_write_admin_editor" on public.standings;
+create policy "sports_write_admin_editor" on public.standings for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+-- -------------------------
+-- STORIES & STORY GROUPS
+-- -------------------------
+drop policy if exists "stories_select_public" on public.story_groups;
+create policy "stories_select_public" on public.story_groups for select using (is_active = true);
+
+drop policy if exists "stories_items_select_public" on public.stories;
+create policy "stories_items_select_public" on public.stories for select using (
+  exists (select 1 from public.story_groups g where g.id = stories.group_id and g.is_active = true)
+);
+
+drop policy if exists "stories_write_admin_editor" on public.story_groups;
+create policy "stories_write_admin_editor" on public.story_groups for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+drop policy if exists "stories_items_write_admin_editor" on public.stories;
+create policy "stories_items_write_admin_editor" on public.stories for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
 
 -- -------------------------
 -- POSTS (lecture publique publiée + édition par rôle)
 -- -------------------------
-
 drop policy if exists "posts_select_published_public" on public.posts;
-create policy "posts_select_published_public"
-on public.posts
-for select
-using (status = 'published');
+create policy "posts_select_published_public" on public.posts for select using (status = 'published');
 
--- lecture des brouillons pour ceux qui peuvent éditer (editor/admin) + l'auteur sur ses posts
 drop policy if exists "posts_select_private_for_editors_and_owner" on public.posts;
-create policy "posts_select_private_for_editors_and_owner"
-on public.posts
-for select
-to authenticated
-using (
-  public.can_manage_content()
-  or author_id = auth.uid()
-);
+create policy "posts_select_private_for_editors_and_owner" on public.posts for select to authenticated using (public.can_manage_content() or author_id = auth.uid());
 
--- INSERT: admin/editor n'importe quel author_id ; author seulement sur lui-même
 drop policy if exists "posts_insert_by_role" on public.posts;
-create policy "posts_insert_by_role"
-on public.posts
-for insert
-to authenticated
-with check (
-  public.can_manage_content()
-  or (public.is_author() and author_id = auth.uid())
-);
+create policy "posts_insert_by_role" on public.posts for insert to authenticated with check (public.can_manage_content() or (public.is_author() and author_id = auth.uid()));
 
--- UPDATE: admin/editor tout ; author seulement ses posts
 drop policy if exists "posts_update_by_role" on public.posts;
-create policy "posts_update_by_role"
-on public.posts
-for update
-to authenticated
-using (
-  public.can_manage_content()
-  or (public.is_author() and author_id = auth.uid())
-)
-with check (
-  public.can_manage_content()
-  or (public.is_author() and author_id = auth.uid())
-);
+create policy "posts_update_by_role" on public.posts for update to authenticated using (public.can_manage_content() or (public.is_author() and author_id = auth.uid())) with check (public.can_manage_content() or (public.is_author() and author_id = auth.uid()));
 
--- DELETE: admin/editor tout ; author seulement ses posts
 drop policy if exists "posts_delete_by_role" on public.posts;
-create policy "posts_delete_by_role"
-on public.posts
-for delete
-to authenticated
-using (
-  public.can_manage_content()
-  or (public.is_author() and author_id = auth.uid())
-);
+create policy "posts_delete_by_role" on public.posts for delete to authenticated using (public.can_manage_content() or (public.is_author() and author_id = auth.uid()));
 
 -- -------------------------
 -- POST_TAGS (hérite des droits du post)
 -- -------------------------
-
--- lecture publique: tags d’un post publié
 drop policy if exists "post_tags_select_public_if_post_published" on public.post_tags;
-create policy "post_tags_select_public_if_post_published"
-on public.post_tags
-for select
-using (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_tags.post_id
-      and p.status = 'published'
-  )
+create policy "post_tags_select_public_if_post_published" on public.post_tags for select using (
+  exists (select 1 from public.posts p where p.id = post_tags.post_id and p.status = 'published')
 );
 
--- lecture privée: editor/admin ou auteur du post
 drop policy if exists "post_tags_select_private_for_editors_and_owner" on public.post_tags;
-create policy "post_tags_select_private_for_editors_and_owner"
-on public.post_tags
-for select
-to authenticated
-using (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_tags.post_id
-      and (public.can_manage_content() or p.author_id = auth.uid())
-  )
+create policy "post_tags_select_private_for_editors_and_owner" on public.post_tags for select to authenticated using (
+  exists (select 1 from public.posts p where p.id = post_tags.post_id and (public.can_manage_content() or p.author_id = auth.uid()))
 );
 
--- write: editor/admin ou auteur du post
 drop policy if exists "post_tags_write_for_editors_and_owner" on public.post_tags;
-create policy "post_tags_write_for_editors_and_owner"
-on public.post_tags
-for all
-to authenticated
-using (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_tags.post_id
-      and (public.can_manage_content() or p.author_id = auth.uid())
-  )
-)
-with check (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_tags.post_id
-      and (public.can_manage_content() or p.author_id = auth.uid())
-  )
+create policy "post_tags_write_for_editors_and_owner" on public.post_tags for all to authenticated using (
+  exists (select 1 from public.posts p where p.id = post_tags.post_id and (public.can_manage_content() or p.author_id = auth.uid()))
+) with check (
+  exists (select 1 from public.posts p where p.id = post_tags.post_id and (public.can_manage_content() or p.author_id = auth.uid()))
 );
 
 -- -------------------------
 -- POST_BLOCKS (lecture publique si post publié, write si droit sur post)
 -- -------------------------
-
 drop policy if exists "post_blocks_select_public_if_post_published" on public.post_blocks;
-create policy "post_blocks_select_public_if_post_published"
-on public.post_blocks
-for select
-using (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_blocks.post_id
-      and p.status = 'published'
-  )
+create policy "post_blocks_select_public_if_post_published" on public.post_blocks for select using (
+  exists (select 1 from public.posts p where p.id = post_blocks.post_id and p.status = 'published')
 );
 
 drop policy if exists "post_blocks_select_private_for_editors_and_owner" on public.post_blocks;
-create policy "post_blocks_select_private_for_editors_and_owner"
-on public.post_blocks
-for select
-to authenticated
-using (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_blocks.post_id
-      and (public.can_manage_content() or p.author_id = auth.uid())
-  )
+create policy "post_blocks_select_private_for_editors_and_owner" on public.post_blocks for select to authenticated using (
+  exists (select 1 from public.posts p where p.id = post_blocks.post_id and (public.can_manage_content() or p.author_id = auth.uid()))
 );
 
 drop policy if exists "post_blocks_write_for_editors_and_owner" on public.post_blocks;
-create policy "post_blocks_write_for_editors_and_owner"
-on public.post_blocks
-for all
-to authenticated
-using (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_blocks.post_id
-      and (public.can_manage_content() or p.author_id = auth.uid())
-  )
-)
-with check (
-  exists (
-    select 1 from public.posts p
-    where p.id = post_blocks.post_id
-      and (public.can_manage_content() or p.author_id = auth.uid())
-  )
+create policy "post_blocks_write_for_editors_and_owner" on public.post_blocks for all to authenticated using (
+  exists (select 1 from public.posts p where p.id = post_blocks.post_id and (public.can_manage_content() or p.author_id = auth.uid()))
+) with check (
+  exists (select 1 from public.posts p where p.id = post_blocks.post_id and (public.can_manage_content() or p.author_id = auth.uid()))
 );
 
-commit;
+-- -------------------------
+-- COMMENTS
+-- -------------------------
+drop policy if exists "comments_select_public_approved" on public.comments;
+create policy "comments_select_public_approved" on public.comments for select using (status = 'approved' or (auth.uid() is not null and author_id = auth.uid()));
 
--- ============================================================
--- OPTIONAL: Storage bucket (images)
--- A exécuter seulement si tu veux tout gérer en SQL.
--- Sinon tu le fais dans l’UI Supabase (Storage -> New bucket).
--- ============================================================
--- -- create bucket
--- insert into storage.buckets (id, name, public)
--- values ('post-images', 'post-images', true)
--- on conflict (id) do nothing;
---
--- -- politiques lecture publique
--- drop policy if exists "public read post-images" on storage.objects;
--- create policy "public read post-images"
--- on storage.objects for select
--- using (bucket_id = 'post-images');
---
--- -- upload réservé aux authenticated (et idéalement editor/admin via edge)
--- drop policy if exists "auth upload post-images" on storage.objects;
--- create policy "auth upload post-images"
--- on storage.objects for insert
--- to authenticated
--- with check (bucket_id = 'post-images');
+drop policy if exists "comments_insert_authenticated" on public.comments;
+create policy "comments_insert_authenticated" on public.comments for insert to authenticated with check (author_id = auth.uid() and status = 'pending');
+
+drop policy if exists "comments_update_own" on public.comments;
+create policy "comments_update_own" on public.comments for update to authenticated using (author_id = auth.uid()) with check (author_id = auth.uid() and status = 'pending');
+
+drop policy if exists "comments_moderate_editor_admin" on public.comments;
+create policy "comments_moderate_editor_admin" on public.comments for all to authenticated using (public.can_manage_content()) with check (public.can_manage_content());
+
+commit;
