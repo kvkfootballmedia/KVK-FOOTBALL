@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useRef } from 'react';
-import { Upload, X, Image as ImageIcon, Loader2 } from 'lucide-react';
-import { api } from '@/services/api';
+import { Upload, X, Loader2 } from 'lucide-react';
+import { STORAGE_BUCKETS, STORAGE_PATHS } from '@/lib/storageConfig';
 import { useNotification } from '@/context/NotificationContext';
+import { api } from '@/services/api';
 
 interface ImageUploadProps {
   value?: string | null;
@@ -12,7 +13,7 @@ interface ImageUploadProps {
   label?: string;
 }
 
-export default function ImageUpload({ value, onChange, className = "", label = "Image" }: ImageUploadProps) {
+export default function ImageUpload({ value, onChange, className = "", label = "Image", bucketKey = 'USER_MEDIA', subFolder = STORAGE_PATHS.user.avatars }: ImageUploadProps & { bucketKey?: keyof typeof STORAGE_BUCKETS; subFolder?: string }) {
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -49,19 +50,18 @@ export default function ImageUpload({ value, onChange, className = "", label = "
       showNotification("Veuillez sélectionner une image valide.", 'error');
       return;
     }
-
     setIsUploading(true);
     try {
-      const url = await api.storage.upload(file);
+      const url = await api.storage.upload(bucketKey, subFolder, file);
+      onChange(url);
       showNotification('Image téléchargée avec succès.', 'success');
     } catch (error) {
-      console.error("Upload error:", error);
+      console.error('Upload error:', error);
       showNotification("Erreur lors de l'upload de l'image.", 'error');
     } finally {
       setIsUploading(false);
     }
   };
-
   const handleRemove = (e: React.MouseEvent) => {
     e.stopPropagation();
     e.preventDefault();

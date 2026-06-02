@@ -21,7 +21,6 @@ export default function RubriqueStrip({ categorySlug, title }: RubriqueStripProp
     const fetchData = async () => {
       setIsLoading(true);
       try {
-        // 1. Get Category
         const { data: cat } = await supabase
           .from('categories')
           .select('id, name')
@@ -31,7 +30,6 @@ export default function RubriqueStrip({ categorySlug, title }: RubriqueStripProp
         if (cat) {
           if (!title) setCategoryName(cat.name);
 
-          // 2. Get Posts
           const { data: postData } = await supabase
             .from('posts')
             .select(`
@@ -48,7 +46,7 @@ export default function RubriqueStrip({ categorySlug, title }: RubriqueStripProp
             .eq('category_id', cat.id)
             .eq('status', 'published')
             .order('published_at', { ascending: false })
-            .limit(3);
+            .limit(4);
 
           if (postData) {
             const transformed = postData.map(p => ({
@@ -71,28 +69,31 @@ export default function RubriqueStrip({ categorySlug, title }: RubriqueStripProp
   if (isLoading || posts.length === 0) return null;
 
   return (
-    <section className="py-20 bg-gray-900 border-y-8 border-primary relative overflow-hidden">
-      {/* Background Decor */}
-      <div className="absolute top-0 right-0 w-1/3 h-full bg-primary opacity-10 skew-x-12 translate-x-1/2"></div>
-      
-      <div className="max-w-6xl mx-auto px-4 relative z-10">
-        <div className="flex justify-between items-end mb-12 border-b border-white/10 pb-8">
-          <div>
-            <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary mb-2 block">Dossiers Spéciaux</span>
-            <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tighter italic">{categoryName}</h2>
+    <section className="py-16 bg-secondary border-t-4 border-primary relative overflow-hidden">
+      <div className="max-w-7xl mx-auto px-4 relative z-10">
+        <div className="flex justify-between items-end mb-8 border-b border-gray-800 pb-4">
+          <div className="flex items-center">
+            <div className="w-2 h-8 bg-primary mr-3"></div>
+            <h2 className="text-3xl md:text-4xl font-heading font-black text-white uppercase tracking-tight">{categoryName}</h2>
           </div>
           <Link 
             href={`/category/${categorySlug}`}
-            className="group flex items-center gap-3 text-white font-black uppercase tracking-widest text-[10px] hover:text-primary transition-colors mb-2"
+            className="group flex items-center gap-2 text-white font-heading font-bold uppercase tracking-widest text-xs hover:text-primary transition-colors mb-2"
           >
-            Voir tout <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            TOUT VOIR <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {posts.map(post => (
-             <div key={post.id} className="bg-white/5 p-4 rounded-[2rem] border border-white/5 hover:border-white/20 transition-all">
-                <PostCard post={post} />
+             <div key={post.id} className="bg-gray-900 border border-gray-800 hover:border-primary transition-colors h-full flex flex-col">
+                {/* Forcing standard mode with dark styling by applying global styling inside the PostCard but since PostCard relies on classes we might need to rely on the fact that PostCard itself has a standard mode that works on dark bgs.
+                    Actually PostCard has a white background. Let's make sure it handles it or wrap it differently.
+                    Wait, PostCard uses bg-white. In a dark section, we can just use the PostCard as is, it gives a nice pop. 
+                 */}
+                <div className="h-full bg-white">
+                  <PostCard post={post} />
+                </div>
              </div>
           ))}
         </div>

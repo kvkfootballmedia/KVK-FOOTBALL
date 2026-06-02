@@ -1,148 +1,229 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Menu, X, Search, ChevronDown } from 'lucide-react';
-import { supabase } from '@/lib/supabaseClient';
+import Image from 'next/image';
+import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { ChevronDown, Menu, X, User, Search } from 'lucide-react';
 
 export default function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [leagues, setLeagues] = useState<any[]>([]);
-  const [activeMenu, setActiveMenu] = useState<string | null>(null);
+  const pathname = usePathname();
+  const router = useRouter();
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchFocused, setSearchFocused] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data: cats } = await supabase.from('categories').select('name, slug').order('name');
-      const { data: leaguesData } = await supabase.from('leagues').select('name, slug, category').order('display_order');
-      
-      if (cats) setCategories(cats);
-      if (leaguesData) setLeagues(leaguesData);
-    };
-    fetchData();
-  }, []);
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = searchQuery.trim();
+    if (q) router.push(`/search?q=${encodeURIComponent(q)}`);
+  };
+
+  // Do not render the navbar in the admin panel
+  if (pathname?.startsWith('/admin')) {
+    return null;
+  }
+
+  const competitions = [
+    { name: 'Ligue des Champions', slug: 'ligue-champions' },
+    { name: 'Premier League', slug: 'premier-league' },
+    { name: 'Ligue 1', slug: 'ligue-1' },
+    { name: 'La Liga', slug: 'la-liga' },
+    { name: 'Serie A', slug: 'serie-a' },
+    { name: 'Bundesliga', slug: 'bundesliga' },
+    { name: 'Copa Libertadores', slug: 'copa-libertadores' },
+  ];
+
+  const mainNav = [
+    { name: 'Accueil', href: '/' },
+    { name: 'Actualités', href: '/category/actualites' },
+    { name: 'Analyses Tactiques', href: '/category/analyses-tactiques' },
+    { name: 'Grands Formats', href: '/category/grands-formats' },
+  ];
+
+  const extraNav = [
+    { name: 'Mercato & Business', href: '/category/mercato-business' },
+    { name: 'Sélections Nationales', href: '/category/selections-nationales' },
+    { name: 'Enquêtes & Dossiers', href: '/category/enquetes' },
+  ];
 
   return (
-    <nav className="border-b border-gray-100 py-6 sticky top-0 bg-white/90 backdrop-blur-xl z-[100]">
-      <div className="container mx-auto px-4 flex justify-between items-center">
-        {/* Logo */}
-        <Link href="/" className="text-3xl font-black tracking-tighter text-primary group">
-          KVK<span className="text-gray-900 group-hover:text-primary transition-colors">FOOTBALL</span>
-        </Link>
-
-        {/* Desktop Links */}
-        <div className="hidden md:flex gap-10 font-bold uppercase text-[11px] tracking-[0.2em] items-center text-gray-400">
-          {/* Rubriques Dropdown */}
-          <div 
-            className="relative group py-2 cursor-pointer"
-            onMouseEnter={() => setActiveMenu('rubriques')}
-            onMouseLeave={() => setActiveMenu(null)}
-          >
-            <div className={`flex items-center gap-1 transition-colors ${activeMenu === 'rubriques' ? 'text-primary' : 'hover:text-gray-900'}`}>
-              Rubriques <ChevronDown className={`w-3 h-3 transition-transform ${activeMenu === 'rubriques' ? 'rotate-180' : ''}`} />
-            </div>
-            
-            {activeMenu === 'rubriques' && (
-              <div className="absolute top-full left-0 w-64 bg-white border border-gray-100 shadow-2xl p-4 grid grid-cols-1 gap-4 animate-in fade-in slide-in-from-top-2">
-                {categories.map(cat => (
-                  <Link 
-                    key={cat.slug} 
-                    href={`/category/${cat.slug}`}
-                    className="hover:text-primary transition-colors border-b border-gray-50 pb-2"
-                  >
-                    {cat.name}
-                  </Link>
-                ))}
+    <div className="sticky top-0 z-50 w-full">
+      {/* Premium vibrant sports accent bar */}
+      <div className="h-[3px] w-full bg-gradient-to-r from-red-600 via-red-500 to-red-700"></div>
+      
+      <nav className="bg-[#0A0F1D]/95 backdrop-blur-md shadow-sm border-b border-[#1E293B] transition-all duration-300">
+        <div className="container mx-auto px-4 lg:px-8">
+          <div className="flex items-center justify-between h-16 lg:h-20">
+            <Link href="/" className="shrink-0 text-xl lg:text-2xl font-black tracking-tighter flex items-center gap-1.5 mr-8 lg:mr-12">
+              <span className="text-red-500 bg-red-950/40 px-2.5 py-1 rounded-lg border border-red-900/50 transition-all hover:bg-red-500 hover:text-white">KVK</span>
+              <div className="animate-trophy-glow relative">
+                <Image
+                  src="/cdm coupe.png"
+                  alt="Coupe du Monde"
+                  width={24}
+                  height={24}
+                  className="object-contain drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]"
+                />
               </div>
-            )}
-          </div>
+              <span className="text-white font-bold">FOOTBALL</span>
+            </Link>
 
-          {/* Championnats Dropdown */}
-          <div 
-            className="relative group py-2 cursor-pointer"
-            onMouseEnter={() => setActiveMenu('leagues')}
-            onMouseLeave={() => setActiveMenu(null)}
-          >
-            <div className={`flex items-center gap-1 transition-colors ${activeMenu === 'leagues' ? 'text-primary' : 'hover:text-gray-900'}`}>
-              Championnats <ChevronDown className={`w-3 h-3 transition-transform ${activeMenu === 'leagues' ? 'rotate-180' : ''}`} />
-            </div>
-            
-            {activeMenu === 'leagues' && (
-              <div className="absolute top-full left-0 w-80 bg-white border border-gray-100 shadow-2xl p-6 grid grid-cols-1 gap-6 animate-in fade-in slide-in-from-top-2">
-                  <div className="space-y-4">
-                    {['National', 'Europe', 'International'].map(cat => {
-                      const categoryLeagues = leagues.filter(l => l.category === cat);
-                      if (categoryLeagues.length === 0) return null;
-                      
-                      return (
-                        <div key={cat}>
-                          <p className="text-[9px] font-black text-gray-300 mb-2 border-b border-gray-50 pb-1">{cat}</p>
-                          <div className="flex flex-col gap-2">
-                            {categoryLeagues.map(league => (
-                              <Link 
-                                key={league.slug} 
-                                href={`/championship/${league.slug}`}
-                                className="text-gray-900 hover:text-primary transition-colors text-xs"
-                              >
-                                {league.name}
-                              </Link>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
+            <div className="hidden lg:flex flex-1 items-center gap-5 xl:gap-7">
+              {mainNav.map(item => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="text-sm font-semibold text-[#94A3B8] hover:text-red-500 transition-colors duration-200"
+                >
+                  {item.name}
+                </Link>
+              ))}
+
+              <div
+                className="relative"
+                onMouseEnter={() => setOpenDropdown('competitions')}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
+                <button className="flex items-center gap-1 text-sm font-semibold text-[#94A3B8] hover:text-red-500 transition-colors duration-200 cursor-pointer">
+                  Compétitions <ChevronDown size={14} className={`transition-transform duration-200 ${openDropdown === 'competitions' ? 'rotate-180 text-red-500' : ''}`} />
+                </button>
+
+                {openDropdown === 'competitions' && (
+                  <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="py-1 px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#1E293B]">Compétitions majeures</div>
+                    <div className="flex flex-col gap-0.5">
+                      {competitions.map(comp => (
+                        <Link
+                          key={comp.slug}
+                          href={`/championship/${comp.slug}`}
+                          className="px-3 py-2 text-xs font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-all duration-150"
+                        >
+                          {comp.name}
+                        </Link>
+                      ))}
+                    </div>
                   </div>
+                )}
               </div>
-            )}
+
+              <div
+                className="relative"
+                onMouseEnter={() => setOpenDropdown('more')}
+                onMouseLeave={() => setOpenDropdown(null)}
+              >
+                <button className="flex items-center gap-1 text-sm font-semibold text-[#94A3B8] hover:text-red-500 transition-colors duration-200 cursor-pointer">
+                  Plus <ChevronDown size={14} className={`transition-transform duration-200 ${openDropdown === 'more' ? 'rotate-180 text-red-500' : ''}`} />
+                </button>
+
+                {openDropdown === 'more' && (
+                  <div className="absolute left-0 mt-2 w-56 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200">
+                    <div className="py-1 px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#1E293B]">Autres Rubriques</div>
+                    <div className="flex flex-col gap-0.5">
+                      {extraNav.map(item => (
+                        <Link
+                          key={item.name}
+                          href={item.href}
+                          className="px-3 py-2 text-xs font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-all duration-150"
+                        >
+                          {item.name}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="hidden md:flex items-center gap-4">
+              <form onSubmit={handleSearch}>
+                <div className={`relative flex items-center transition-all duration-300 rounded-full border ${searchFocused ? 'w-64 border-red-500 ring-2 ring-red-950/40 bg-[#0A0F1D]' : 'w-48 border-[#334155] bg-[#1E293B]/40'}`}>
+                  <button type="submit" className="pl-3.5 text-gray-500 hover:text-red-500 transition-colors">
+                    <Search size={16} className={`${searchFocused ? 'text-red-500' : ''}`} />
+                  </button>
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={e => setSearchQuery(e.target.value)}
+                    placeholder="Rechercher..."
+                    onFocus={() => setSearchFocused(true)}
+                    onBlur={() => setSearchFocused(false)}
+                    className="w-full pl-2 pr-4 py-2 bg-transparent border-0 text-xs font-medium text-white placeholder-gray-500 focus:outline-none focus:ring-0"
+                  />
+                </div>
+              </form>
+              
+              <Link
+                href="/login"
+                aria-label="Connexion"
+                className="p-2.5 text-[#94A3B8] hover:text-red-500 hover:bg-red-950/40 rounded-full border border-transparent hover:border-red-900/50 transition-all duration-200"
+              >
+                <User size={18} />
+              </Link>
+            </div>
+
+            <button
+              className="lg:hidden p-2 text-[#94A3B8] hover:bg-[#1E293B] rounded-lg transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
           </div>
 
-          <div className="w-px h-6 bg-gray-100 mx-2"></div>
-          
-          <button className="p-2 hover:text-primary transition-colors">
-            <Search className="w-5 h-5 text-gray-900" />
-          </button>
-        </div>
-
-        {/* Mobile Toggle */}
-        <button onClick={() => setIsOpen(!isOpen)} className="md:hidden p-2">
-          {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden fixed inset-x-0 top-[88px] h-[calc(100vh-88px)] bg-white z-[200] overflow-y-auto p-8 animate-in slide-in-from-right">
-          <div className="space-y-12">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Rubriques</p>
-              <div className="flex flex-col gap-6">
-                {categories.map(cat => (
-                  <Link key={cat.slug} href={`/category/${cat.slug}`} onClick={() => setIsOpen(false)} className="text-3xl font-black uppercase tracking-tighter italic hover:text-primary transition-colors">
-                    {cat.name}
+          {mobileMenuOpen && (
+            <div className="lg:hidden flex flex-col gap-1 pb-6 pt-2 border-t border-[#1E293B] animate-in slide-in-from-top duration-300">
+              {mainNav.map(item => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="block px-4 py-2.5 text-sm font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-colors"
+                >
+                  {item.name}
+                </Link>
+              ))}
+              
+              <div className="mt-2 pt-2 border-t border-[#1E293B]">
+                <p className="px-4 text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Autres Rubriques</p>
+                {extraNav.map(item => (
+                  <Link
+                    key={item.name}
+                    href={item.href}
+                    className="block px-4 py-2 text-sm font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-colors"
+                  >
+                    {item.name}
                   </Link>
                 ))}
               </div>
-            </div>
 
-            <hr className="border-gray-100" />
+              <div className="mt-3 px-4 py-2">
+                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Compétitions</p>
+                <div className="grid grid-cols-2 gap-1.5">
+                  {competitions.map(comp => (
+                    <Link
+                      key={comp.slug}
+                      href={`/championship/${comp.slug}`}
+                      className="text-xs font-semibold text-[#94A3B8] hover:text-red-500 py-1"
+                    >
+                      {comp.name}
+                    </Link>
+                  ))}
+                </div>
+              </div>
 
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary mb-6">Championnats</p>
-              <div className="grid grid-cols-2 gap-8">
-                {leagues.map(league => (
-                  <Link key={league.slug} href={`/championship/${league.slug}`} onClick={() => setIsOpen(false)} className="text-sm font-black uppercase tracking-tight hover:text-primary transition-colors">
-                    {league.name}
-                  </Link>
-                ))}
+              <div className="mt-4 pt-4 border-t border-[#1E293B] px-4">
+                <Link
+                  href="/login"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#1E293B] border border-[#334155] text-sm font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 rounded-xl transition-all"
+                >
+                  <User size={16} />
+                  <span>Espace Connexion</span>
+                </Link>
               </div>
             </div>
-          </div>
-          
-          <div className="mt-20 pt-12 border-t border-gray-100 text-[10px] text-gray-400 font-serif italic">
-            KVK Football — L'excellence éditoriale au service du jeu.
-          </div>
+          )}
         </div>
-      )}
-    </nav>
+      </nav>
+    </div>
   );
 }

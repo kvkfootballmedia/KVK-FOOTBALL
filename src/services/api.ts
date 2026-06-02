@@ -1,5 +1,6 @@
 import { Post } from '../types';
 import { supabase } from '@/lib/supabaseClient'; // 👈 client Supabase comme SOKO
+import { STORAGE_BUCKETS, generateStoragePath } from '@/lib/storageConfig';
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
@@ -14,7 +15,6 @@ async function getAccessToken(): Promise<string | null> {
   console.log('SESSION', data.session);
   return data.session?.access_token ?? null;
 }
-
 
 /**
  * Appel Edge Function (réservé aux edges admin/sensibles)
@@ -38,7 +38,7 @@ async function callEdgeFunction<T>(path: string, options: RequestInit = {}): Pro
   if (!response.ok) {
     const text = await response.text();
     console.error(`Edge Function Error (${response.status}):`, text);
-    throw new Error(`EDGE_ERROR_${response.status}: ${text}`);
+    throw new Error(text);
   }
 
   return response.json();
@@ -63,6 +63,9 @@ export const api = {
             featured_image,
             published_at,
             is_featured,
+            has_video,
+            view_count,
+            reading_time,
             categories:category_id!inner ( name, slug ),
             author:profiles!posts_author_id_fkey ( full_name, role )
           `)
@@ -99,10 +102,16 @@ export const api = {
           slug,
           excerpt,
           featured_image,
+          meta_title,
+          meta_description,
+          is_featured,
+          has_video,
+          view_count,
+          reading_time,
           published_at,
           categories:category_id ( name, slug ),
           author:profiles!posts_author_id_fkey ( full_name, role ),
-          post_blocks ( id, type, content, caption, sort_order )
+          post_blocks ( id, block_type, content, caption, position )
         `)
         .eq('slug', slug)
         .maybeSingle();
@@ -152,6 +161,33 @@ export const api = {
        const { error } = await supabase.from('posts').delete().eq('id', postId);
        if (error) throw error;
        return true;
+    },
+  },
+
+  /**
+   * ✅ LEAGUES (championnats internationaux)
+   */
+  leagues: {
+    getAll: async () => {
+      const { data, error } = await supabase
+        .from('leagues')
+        .select('id, name, slug, api_id, category, logo_url, sort_order')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+      if (error) throw error;
+      return data ?? [];
+    },
+
+    getBySlug: async (slug: string) => {
+      const { data, error } = await supabase
+        .from('leagues')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+
+      if (error) return { data: null, error };
+      return { data, error: null };
     },
   },
 
@@ -207,25 +243,36 @@ export const api = {
    * 📁 STORAGE : Gestion des fichiers
    */
   storage: {
-    upload: async (file: File): Promise<string> => {
+    /**
+    * Upload a file to a specific bucket/subfolder.
+    * @param bucketKey - One of the defined bucket constants (e.g., 'ARTICLES_MEDIA')
+    * @param subFolder - Sub‑folder inside the bucket (e.g., STORAGE_PATHS.articles.featured)
+    */
+    upload: async (
+      bucketKey: keyof typeof STORAGE_BUCKETS,
+      subFolder: string,
+      file: File
+    ): Promise<string> => {
       const token = await getAccessToken();
       if (!token) throw new Error('NOT_AUTHENTICATED');
 
-      // 1. Générer un nom unique
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`;
-      const filePath = `uploads/${fileName}`;
+      // Determine bucket name from key
+      const bucket = STORAGE_BUCKETS[bucketKey];
 
-      // 2. Upload
+      // 1. Generate a unique path using the helper (category derived from bucket)
+      const category = bucketKey === 'ARTICLES_MEDIA' ? 'articles' : bucketKey === 'USER_MEDIA' ? 'user' : 'static';
+      const filePath = generateStoragePath(category as any, subFolder, file.name);
+
+      // 2. Upload to Supabase storage
       const { error: uploadError } = await supabase.storage
-        .from('media')
+        .from(bucket)
         .upload(filePath, file);
 
       if (uploadError) throw uploadError;
 
-      // 3. Get Public URL
+      // 3. Public URL
       const { data } = supabase.storage
-        .from('media')
+        .from(bucket)
         .getPublicUrl(filePath);
 
       return data.publicUrl;

@@ -13,58 +13,67 @@ export default function AdminLoginPage() {
   const router = useRouter();
 
   const handleLogin = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError('');
+    e.preventDefault();
+    setIsLoading(true);
+    setError('');
 
-  try {
-    const { data, error: authError } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const GENERIC_ERROR = 'Identifiants invalides ou acces non autorise.';
 
-    if (authError) throw authError;
-    if (!data.user) throw new Error('Utilisateur introuvable');
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
 
-    // 🔍 Vérification métier : le profil existe
-    const { data: profile, error: profileError } = await supabase
-      .from('profiles')
-      .select('role, full_name')
-      .eq('id', data.user.id)
-      .single();
+      if (authError || !data.user) {
+        console.error('[login] auth:', authError?.message);
+        setError(GENERIC_ERROR);
+        return;
+      }
 
-    if (profileError) {
-      throw new Error("Profil utilisateur inaccessible (RLS ou FK)");
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', data.user.id)
+        .single();
+
+      if (profileError || !profile) {
+        console.error('[login] profile:', profileError?.message);
+        await supabase.auth.signOut();
+        setError(GENERIC_ERROR);
+        return;
+      }
+
+      if (!['admin', 'editor', 'author'].includes(profile.role)) {
+        console.error('[login] role:', profile.role);
+        await supabase.auth.signOut();
+        setError(GENERIC_ERROR);
+        return;
+      }
+
+      router.push('/admin');
+      router.refresh();
+
+    } catch (err: any) {
+      console.error('[login] unexpected:', err?.message);
+      setError(GENERIC_ERROR);
+    } finally {
+      setIsLoading(false);
     }
-
-    // 🔐 OPTIONNEL MAIS RECOMMANDÉ : filtrer l’accès admin
-    if (!['admin', 'editor', 'author'].includes(profile.role)) {
-      throw new Error("Accès non autorisé.");
-    }
-
-    // ✅ Supabase gère la session, point.
-    router.push('/admin');
-    router.refresh();
-
-  } catch (err: any) {
-    console.error('Login error:', err);
-    setError(err.message || 'Identifiants invalides.');
-  } finally {
-    setIsLoading(false);
-  }
-};
-
+  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-white px-4">
       <div className="max-w-md w-full space-y-12">
         <div className="text-center">
-          <span className="text-xs font-black uppercase tracking-[0.5em] text-primary mb-4 block">Portail Privé</span>
+          <span className="text-xs font-black uppercase tracking-[0.5em] text-primary mb-4 block">
+            Portail Prive
+          </span>
           <h1 className="text-5xl font-black uppercase tracking-tighter italic border-b-4 border-gray-900 pb-2 inline-block">
             Connexion
           </h1>
           <p className="mt-6 text-gray-400 font-serif italic text-lg">
-            Espace de rédaction KVK Football
+            Espace de redaction KVK Football
           </p>
         </div>
 
@@ -113,7 +122,7 @@ export default function AdminLoginPage() {
 
         <div className="pt-12 text-center border-t border-gray-100">
           <p className="text-[10px] text-gray-300 font-black uppercase tracking-widest">
-            Accès réservé au personnel autorisé uniquement.
+            Acces reserve au personnel autorise uniquement.
           </p>
         </div>
       </div>

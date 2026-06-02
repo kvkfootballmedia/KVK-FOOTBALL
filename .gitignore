@@ -39,3 +39,18 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# npm cache
+.npm-cache/
+npm-cache/
+.npm/
+
+# IDE settings
+.idea/
+
+# Node compile cache (contient des artefacts binaires, faux positifs sécurité)
+.notmp/
+
+# Scripts de dev / exploration API (peuvent contenir des clés temporaires)
+scripts/
+

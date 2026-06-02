@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #1a1a1a;
-  --primary: #c4122e; /* Football red */
-  --secondary: #1e3a8a; /* Deep blue */
-  --accent: #f3f4f6;
-  --text-muted: #6b7280;
+  --background: #f8f9fa;
+  --foreground: #111827;
+  --primary: #d3122a; /* Strong sports red */
+  --secondary: #0f172a; /* Dark navy / Slate */
+  --accent: #e5e7eb;
+  --text-muted: #4b5563;
 }
 
 @theme inline {
@@ -16,13 +16,22 @@
   --color-secondary: var(--secondary);
   --color-accent: var(--accent);
   --color-text-muted: var(--text-muted);
+
+  --font-sans: var(--font-roboto), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  line-height: 1.6;
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+}
+
+/* Base Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  text-transform: uppercase;
 }
 
 /* Editorial Typography */
@@ -31,13 +40,74 @@ body {
 }
 
 .prose h2 {
-  @apply text-2xl font-bold mt-10 mb-4 tracking-tight;
+  @apply text-3xl font-bold mt-10 mb-4 tracking-tight font-heading uppercase border-l-4 border-primary pl-4;
 }
 
 .prose p {
-  @apply mb-6;
+  @apply mb-6 font-sans text-lg text-gray-800 leading-relaxed;
 }
 
 .prose blockquote {
-  @apply border-l-4 border-primary pl-4 italic my-8 text-xl text-gray-700;
+  @apply border-l-4 border-primary pl-4 my-8 text-xl font-heading uppercase text-gray-900 bg-gray-100 p-6;
+}
+
+/* ── Flags marquee ────────────────────────────────────────── */
+@keyframes flags-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-flags-marquee {
+  animation: flags-marquee 40s linear infinite;
+}
+.animate-flags-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ── Trophy glow pulse ───────────────────────────────────── */
+@keyframes trophy-glow {
+  0%, 100% {
+    filter: drop-shadow(0 0 4px rgba(251,191,36,0.5))
+            drop-shadow(0 0 8px rgba(251,191,36,0.2));
+    transform: scale(1);
+  }
+  50% {
+    filter: drop-shadow(0 0 8px rgba(251,191,36,0.9))
+            drop-shadow(0 0 16px rgba(251,191,36,0.4));
+    transform: scale(1.06);
+  }
+}
+.animate-trophy-glow {
+  animation: trophy-glow 2.8s ease-in-out infinite;
+}
+
+/* ── Flag strip fade mask ────────────────────────────────── */
+.flags-fade-mask {
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    black 12%,
+    black 88%,
+    transparent 100%
+  );
+}
+
+/* ── Premium card shimmer ────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+.shimmer-border {
+  background: linear-gradient(
+    90deg,
+    #1e293b 0%, #334155 40%, #e11d48 50%, #334155 60%, #1e293b 100%
+  );
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
 }

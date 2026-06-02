@@ -1,10 +1,11 @@
 'use client';
 
-import { useState } from 'react';
-import { Post, ContentStatus, PostBlock, Tag, Category } from '@/types';
+import { useState, useEffect, useRef } from 'react';
+import { Post, ContentStatus, PostBlock, Category } from '@/types';
 import BlockEditor from './BlockEditor';
 import ImageUpload from './ImageUpload';
-import { Settings, Globe, Layout, ChevronRight, Trash2, Eye } from 'lucide-react';
+import FocalPointSelector from './FocalPointSelector';
+import { Settings, Globe, Layout, ChevronRight, Trash2, Eye, Crosshair } from 'lucide-react';
 import { useNotification } from '@/context/NotificationContext';
 import ConfirmModal from '@/components/ui/ConfirmModal';
 
@@ -16,26 +17,53 @@ interface ArticleFormProps {
   categories?: Category[];
 }
 
+function slugify(text: string): string {
+  return text
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export default function ArticleForm({ initialData = {}, onSave, onDelete, userRole, categories = [] }: ArticleFormProps) {
+  const isNewPost = !initialData.id;
+  const slugManuallyEdited = useRef(false);
+
   const [formData, setFormData] = useState({
-    title: initialData.title || '',
-    slug: initialData.slug || '',
-    excerpt: initialData.excerpt || '',
-    category_id: initialData.category_id || '', 
-    meta_title: initialData.meta_title || '',
-    meta_description: initialData.meta_description || '',
-    featured_image: initialData.featured_image || null,
-    is_featured: initialData.is_featured || false,
+    title:                   initialData.title                   || '',
+    slug:                    initialData.slug                    || '',
+    excerpt:                 initialData.excerpt                 || '',
+    category_id:             initialData.category_id             || '',
+    meta_title:              initialData.meta_title              || '',
+    meta_description:        initialData.meta_description        || '',
+    featured_image:          initialData.featured_image          || null,
+    featured_image_focal_x:  initialData.featured_image_focal_x  ?? 50,
+    featured_image_focal_y:  initialData.featured_image_focal_y  ?? 50,
+    is_featured:             initialData.is_featured             || false,
   });
 
   const [postBlocks, setPostBlocks] = useState<PostBlock[]>(initialData.post_blocks || []);
+  const [showFocalPoint, setShowFocalPoint] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { showNotification } = useNotification();
 
+  // Auto-génération du slug depuis le titre (nouveau post uniquement)
+  useEffect(() => {
+    if (!isNewPost || slugManuallyEdited.current) return;
+    if (formData.title) {
+      setFormData(prev => ({ ...prev, slug: slugify(prev.title) }));
+    }
+  }, [formData.title, isNewPost]);
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
     const finalValue = type === 'checkbox' ? (e.target as HTMLInputElement).checked : value;
+
+    // Marquer le slug comme édité manuellement
+    if (name === 'slug') slugManuallyEdited.current = true;
+
     setFormData(prev => ({ ...prev, [name]: finalValue }));
   };
 
@@ -44,15 +72,15 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
       showNotification('Titre et Slug obligatoires pour publier.', 'error');
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
-      const payload = { 
-        ...formData, 
-        post_blocks: postBlocks, 
-        status 
+      const payload = {
+        ...formData,
+        ...(initialData.id ? { id: initialData.id } : {}),
+        post_blocks: postBlocks,
+        status,
       };
-      
       await onSave(payload);
     } catch (error) {
       showNotification('Erreur lors de la sauvegarde.', 'error');
@@ -76,19 +104,18 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
 
   return (
     <div className="space-y-16 max-w-4xl mx-auto">
-      {/* 1. EDITORIAL HEADER & META */}
+
+      {/* 1. INFORMATIONS EDITORIALES */}
       <section className="space-y-8">
         <div className="flex items-center justify-between border-b-2 border-gray-900 pb-4">
           <div className="flex items-center gap-3">
-             <Layout className="w-5 h-5 text-primary" />
-             <h2 className="text-xl font-black uppercase tracking-tighter italic">Informations Éditoriales</h2>
+            <Layout className="w-5 h-5 text-primary" />
+            <h2 className="text-xl font-black uppercase tracking-tighter italic">Informations Editoriales</h2>
           </div>
-          
-          {/* Preview Button */}
           {initialData.slug && (
-            <a 
-              href={`/article/${initialData.slug}`} 
-              target="_blank" 
+            <a
+              href={`/article/${initialData.slug}`}
+              target="_blank"
               className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-primary transition-colors"
             >
               <Eye className="w-4 h-4" /> Voir l'article
@@ -97,9 +124,10 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
         </div>
 
         <div className="grid grid-cols-1 gap-6">
+          {/* Titre */}
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-[2px] text-gray-400">Titre de l'article</label>
-            <input 
+            <input
               name="title"
               value={formData.title}
               onChange={handleChange}
@@ -108,21 +136,60 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
             />
           </div>
 
-          <div className="space-y-2">
-             <ImageUpload 
-               label="Image de Couverture (Une)"
-               value={formData.featured_image ?? ''} // Ensure it's not null/undefined
-               onChange={(url) => setFormData(prev => ({ ...prev, featured_image: url }))}
-             />
+          {/* Image de couverture + Focal Point */}
+          <div className="space-y-3">
+            <ImageUpload
+              label="Image de Couverture (Une)"
+              value={formData.featured_image ?? ''}
+              onChange={(url) => {
+                setFormData(prev => ({ ...prev, featured_image: url, featured_image_focal_x: 50, featured_image_focal_y: 50 }));
+                setShowFocalPoint(false);
+              }}
+            />
+
+            {formData.featured_image && (
+              <div className="border border-gray-100 rounded-sm overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setShowFocalPoint(v => !v)}
+                  className="w-full flex items-center justify-between px-4 py-2.5 bg-gray-50 hover:bg-gray-100 transition-colors text-[10px] font-black uppercase tracking-widest text-gray-500"
+                >
+                  <span className="flex items-center gap-2">
+                    <Crosshair className="w-3 h-3" />
+                    Point focal & zoom — {formData.featured_image_focal_x.toFixed(0)}% / {formData.featured_image_focal_y.toFixed(0)}%
+                  </span>
+                  <span>{showFocalPoint ? '▲ Masquer' : '▼ Regler'}</span>
+                </button>
+
+                {showFocalPoint && (
+                  <div className="p-4 bg-white">
+                    <FocalPointSelector
+                      imageUrl={formData.featured_image}
+                      initialX={formData.featured_image_focal_x}
+                      initialY={formData.featured_image_focal_y}
+                      onFocalPointChange={(x, y) =>
+                        setFormData(prev => ({ ...prev, featured_image_focal_x: x, featured_image_focal_y: y }))
+                      }
+                    />
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-4">
             <div className="space-y-4">
+              {/* Slug */}
               <div className="space-y-2">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Slug URL</label>
+                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-500 flex items-center justify-between">
+                  <span>Slug URL</span>
+                  {isNewPost && !slugManuallyEdited.current && formData.slug && (
+                    <span className="text-primary font-bold">Auto</span>
+                  )}
+                </label>
                 <div className="flex items-center text-xs font-mono text-gray-400 bg-gray-50 p-2 rounded-sm">
                   <span>kvkfootball.fr/</span>
-                  <input 
+                  <input
                     name="slug"
                     value={formData.slug}
                     onChange={handleChange}
@@ -130,23 +197,26 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
                   />
                 </div>
               </div>
+
+              {/* Categorie */}
               <div className="space-y-2">
-                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Catégorie principale</label>
-                <select 
+                <label className="text-[9px] font-bold uppercase tracking-widest text-gray-500">Categorie principale</label>
+                <select
                   name="category_id"
                   value={formData.category_id}
                   onChange={handleChange}
                   className="w-full p-2 bg-white border border-gray-100 rounded-sm text-xs"
                 >
-                  <option value="">Sélectionner une catégorie</option>
+                  <option value="">Selectionner une categorie</option>
                   {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
               </div>
             </div>
 
+            {/* A la une */}
             <div className="flex flex-col justify-end">
               <label className="flex items-center gap-3 cursor-pointer p-4 border border-blue-100 bg-blue-50/30 rounded-sm group hover:border-blue-200 transition-all">
-                <input 
+                <input
                   type="checkbox"
                   name="is_featured"
                   checked={formData.is_featured}
@@ -154,8 +224,8 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
                   className="w-5 h-5 accent-primary"
                 />
                 <div>
-                  <span className="block text-xs font-black uppercase tracking-widest text-blue-900">Mettre à la une</span>
-                  <span className="text-[10px] text-blue-700/60 font-serif italic">Afficher cet article en tête de liste sur l'accueil</span>
+                  <span className="block text-xs font-black uppercase tracking-widest text-blue-900">Mettre a la une</span>
+                  <span className="text-[10px] text-blue-700/60 font-serif italic">Afficher cet article en tete de liste sur l'accueil</span>
                 </div>
               </label>
             </div>
@@ -163,19 +233,19 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
         </div>
       </section>
 
-      {/* 2. SUMMARY / EXCERPT */}
+      {/* 2. CHAPEAU */}
       <section className="space-y-6">
         <label className="text-[10px] font-black uppercase tracking-[2px] text-gray-400">Le Chapeau (Accroche)</label>
-        <textarea 
+        <textarea
           name="excerpt"
           value={formData.excerpt}
           onChange={handleChange}
           className="w-full min-h-[140px] p-8 bg-gray-50 border-none font-serif text-2xl italic leading-relaxed text-gray-700 placeholder:text-gray-200 focus:bg-white focus:shadow-inner transition-all outline-none rounded-sm"
-          placeholder="Résumé de l'article en quelques lignes..."
+          placeholder="Resume de l'article en quelques lignes..."
         />
       </section>
 
-      {/* 3. CONTENT ENGINE (BLOCKS) */}
+      {/* 3. MOTEUR DE CONTENU */}
       <section className="space-y-8">
         <div className="flex items-center gap-3 border-b-2 border-gray-900 pb-4">
           <Settings className="w-5 h-5 text-primary" />
@@ -184,27 +254,26 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
         <BlockEditor blocks={postBlocks} onChange={setPostBlocks} />
       </section>
 
-      {/* 4. SEO & REFERENCING */}
+      {/* 4. SEO */}
       <section className="space-y-8 bg-gray-900 p-10 rounded-sm text-white shadow-2xl">
         <div className="flex items-center gap-3 border-b border-white/10 pb-4">
           <Globe className="w-5 h-5 text-primary" />
-          <h2 className="text-xl font-black uppercase tracking-tighter italic">Référencement & SEO</h2>
+          <h2 className="text-xl font-black uppercase tracking-tighter italic">Referencement & SEO</h2>
         </div>
-        
         <div className="grid grid-cols-1 gap-6">
           <div className="space-y-2">
             <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Balise Title SEO</label>
-            <input 
+            <input
               name="meta_title"
               value={formData.meta_title}
               onChange={handleChange}
               className="w-full bg-white/5 border border-white/10 p-3 text-sm focus:border-primary outline-none transition-colors"
-              placeholder="Si différent du titre principal..."
+              placeholder="Si different du titre principal..."
             />
           </div>
           <div className="space-y-2">
             <label className="text-[9px] font-bold uppercase tracking-widest text-gray-400">Meta Description</label>
-            <textarea 
+            <textarea
               name="meta_description"
               value={formData.meta_description}
               onChange={handleChange}
@@ -215,11 +284,10 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
         </div>
       </section>
 
-      {/* 5. PUBLICATION CONTROLS (Floating Bar) */}
+      {/* 5. BARRE DE PUBLICATION */}
       <div className="fixed bottom-10 left-1/2 -translate-x-1/2 flex gap-4 p-4 bg-white/80 backdrop-blur-xl border-2 border-gray-900 rounded-full shadow-2xl z-[100] md:scale-110 scale-90">
-         {/* Delete Button (Only if editing existing post) */}
         {initialData.id && onDelete && (
-          <button 
+          <button
             onClick={handleDeleteClick}
             disabled={isSubmitting}
             className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-600 hover:text-white rounded-full transition-all flex items-center justify-center"
@@ -229,7 +297,7 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
           </button>
         )}
 
-        <button 
+        <button
           onClick={() => handleSubmit('draft')}
           disabled={isSubmitting}
           className="px-6 py-2 bg-white text-gray-900 font-black uppercase tracking-widest text-[9px] hover:bg-gray-100 transition-all disabled:opacity-50"
@@ -237,7 +305,7 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
           Brouillon
         </button>
 
-        <button 
+        <button
           onClick={() => handleSubmit('review')}
           disabled={isSubmitting}
           className="px-6 py-2 bg-gray-900 text-white font-black uppercase tracking-widest text-[9px] hover:bg-black transition-all disabled:opacity-50"
@@ -247,7 +315,7 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
 
         {(userRole === 'admin' || userRole === 'editor') && (
           <div className="pl-4 border-l border-gray-100 ml-2">
-            <button 
+            <button
               onClick={() => handleSubmit('published')}
               disabled={isSubmitting}
               className="px-8 py-2 bg-primary text-white font-black uppercase tracking-widest text-[10px] hover:bg-black transition-all shadow-[0_4px_20px_rgba(196,18,46,0.2)] disabled:opacity-50 flex items-center gap-2"
@@ -258,10 +326,10 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
         )}
       </div>
 
-      <ConfirmModal 
+      <ConfirmModal
         isOpen={showDeleteConfirm}
         title="Suppression"
-        message="Voulez-vous vraiment supprimer cet article ? Cette action est définitive."
+        message="Voulez-vous vraiment supprimer cet article ? Cette action est definitive."
         onConfirm={confirmDelete}
         onCancel={() => setShowDeleteConfirm(false)}
       />

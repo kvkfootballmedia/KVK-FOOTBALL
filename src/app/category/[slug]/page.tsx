@@ -27,19 +27,19 @@
       const remainingPosts = posts.slice(1);
     
       return (
-        <div className="max-w-6xl mx-auto px-4 py-16">
-          <header className="mb-20">
+        <div className="max-w-7xl mx-auto px-4 py-8 md:py-16">
+          <header className="mb-12 md:mb-20">
             <div className="space-y-4">
               <span className="text-xs font-black uppercase tracking-[0.4em] text-primary">Rubrique</span>
-              <h1 className="text-6xl md:text-8xl font-black uppercase tracking-tighter text-gray-900 italic-none italic">
+              <h1 className="text-5xl md:text-7xl font-heading font-black uppercase tracking-tight text-secondary">
                 {category?.name || slug}
               </h1>
-              <div className="w-24 h-2 bg-primary rounded-full"></div>
+              <div className="w-24 h-2 bg-primary"></div>
             </div>
           </header>
     
           {posts.length > 0 ? (
-            <div className="space-y-24">
+            <div className="space-y-16 md:space-y-24">
               {/* Feature the first post */}
               {featuredPost && (
                 <PostCard post={featuredPost} featured={true} />
@@ -48,11 +48,12 @@
               {remainingPosts.length > 0 && (
                 <>
                   <div className="flex items-center gap-6">
-                    <h2 className="text-xs font-black uppercase tracking-[0.3em] text-gray-400 whitespace-nowrap">Plus de contenus</h2>
-                    <div className="h-px bg-gray-100 w-full"></div>
+                    <div className="w-2 h-6 bg-secondary"></div>
+                    <h2 className="text-xl font-heading font-black uppercase tracking-widest text-secondary whitespace-nowrap">Plus de contenus</h2>
+                    <div className="h-px bg-gray-200 w-full"></div>
                   </div>
                   
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-16">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {remainingPosts.map(post => (
                       <PostCard key={post.id} post={post} />
                     ))}
@@ -61,10 +62,10 @@
               )}
             </div>
           ) : (
-             <div className="py-24 text-center border-2 border-dashed border-gray-100 rounded-[3rem] bg-white mt-12">
-               <p className="text-2xl text-gray-300 font-serif italic mb-8">Cette rubrique est en cours de rédaction...</p>
-               <Link href="/" className="px-8 py-3 bg-gray-900 text-white font-black uppercase tracking-widest text-xs hover:bg-black transition-all rounded-full">
-                 Retour à l'accueil
+             <div className="py-24 text-center border-2 border-gray-200 bg-white mt-12 flex flex-col items-center justify-center">
+               <p className="text-2xl text-gray-400 font-heading font-bold uppercase tracking-widest mb-8">Cette rubrique est en cours de rédaction...</p>
+               <Link href="/" className="px-8 py-4 bg-secondary text-white font-heading font-black uppercase tracking-widest text-sm hover:bg-primary transition-colors border border-transparent">
+                 RETOUR À L'ACCUEIL
                </Link>
              </div>
           )}

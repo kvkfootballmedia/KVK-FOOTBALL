@@ -1,8 +1,15 @@
 import { Metadata } from 'next';
+import { Fragment } from 'react';
 import Link from 'next/link';
+import DOMPurify from 'isomorphic-dompurify';
 import { Post, PostBlock } from '@/types';
 import { supabase } from '@/lib/supabaseClient';
 import RelatedArticles from '@/components/editorial/RelatedArticles';
+import CommentsSection from '@/components/editorial/CommentsSection';
+import ShortVideoBlock from '@/components/editorial/ShortVideoBlock';
+import ShareBar from '@/components/editorial/ShareBar';
+import AdBanner from '@/components/ads/AdBanner';
+import ViewTracker from '@/components/editorial/ViewTracker';
 
 // Revalidate every 5 minutes as per instructions
 export const revalidate = 300;
@@ -14,9 +21,9 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
   switch (block_type) {
     case "paragraph":
       return (
-        <div 
-          className="font-serif text-xl leading-relaxed text-gray-800 mb-10 prose prose-lg prose-gray max-w-none" 
-          dangerouslySetInnerHTML={{ __html: content.text }} 
+        <div
+          className="font-serif text-xl leading-relaxed text-gray-800 mb-10 prose prose-lg prose-gray max-w-none"
+          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.text || '') }}
         />
       );
     case "heading":
@@ -64,7 +71,7 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
       return (
         <ul className="list-disc list-inside space-y-4 font-serif text-xl text-gray-800 mb-10 pl-4 border-l-2 border-gray-100">
           {content.items?.map((item: string, i: number) => (
-            <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+            <li key={i} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item || '') }} />
           ))}
         </ul>
       );
@@ -97,7 +104,17 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
         </div>
       );
     case "html":
-      return <div className="my-10" dangerouslySetInnerHTML={{ __html: content.html }} />;
+      return <div className="my-10" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.html || '', { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'src'] }) }} />;
+
+    case "short_video":
+      return (
+        <ShortVideoBlock
+          url={content.url}
+          platform={content.platform}
+          caption={content.caption}
+        />
+      );
+
     default:
       return null;
   }
@@ -148,6 +165,8 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
       slug,
       excerpt,
       featured_image,
+      featured_image_focal_x,
+      featured_image_focal_y,
       published_at,
       category_id,
       categories:category_id ( name, slug ),
@@ -183,26 +202,44 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+      <ViewTracker postId={transformedPost.id} />
       <article className="pb-32 bg-white">
-        {/* Editorial Header */}
-        <header className="py-20 md:py-32 bg-white border-b border-gray-100">
-          <div className="container mx-auto px-4 max-w-4xl text-center">
-            <div className="flex flex-wrap justify-center gap-6 mb-12">
+        {/* Editorial Header — centré */}
+        <header className="py-8 md:py-20 bg-white border-b border-gray-100">
+          <div className="container mx-auto px-3 md:px-4 max-w-3xl text-center">
+            {/* Catégorie */}
+            <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-4 md:mb-6">
               {transformedPost.categories.map((cat: any, i: number) => (
-                <Link key={i} href={`/category/${cat.slug}`} className="text-primary font-black uppercase tracking-[0.3em] text-[10px] hover:underline transition-all">
+                <Link key={i} href={`/category/${cat.slug}`}
+                  className="inline-flex items-center gap-1 text-primary font-black uppercase tracking-[0.2em] text-[9px] md:text-[10px] hover:underline transition-all">
+                  <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary inline-block" />
                   {cat.name}
                 </Link>
               ))}
             </div>
-            <h1 className="text-5xl md:text-8xl font-black mb-12 leading-[0.9] tracking-tighter uppercase italic">
+
+            {/* Titre */}
+            <h1 className="text-xl md:text-5xl font-black mb-4 md:mb-6 leading-tight tracking-tight uppercase text-gray-900">
               {transformedPost.title}
             </h1>
-            <div className="flex items-center justify-center gap-6 pt-8 border-t border-gray-100 w-fit mx-auto px-12">
+
+            {/* Excerpt */}
+            {transformedPost.excerpt && (
+              <p className="font-serif text-sm md:text-lg text-gray-500 leading-relaxed mb-5 md:mb-8 max-w-xl mx-auto hidden sm:block">
+                {transformedPost.excerpt}
+              </p>
+            )}
+
+            {/* Byline */}
+            <div className="flex items-center justify-center gap-2 md:gap-3 pt-4 md:pt-6 border-t border-gray-100">
+              <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-[10px] md:text-xs font-black uppercase select-none shrink-0">
+                {(transformedPost.author?.full_name || 'K')[0]}
+              </div>
               <div className="text-left">
-                <p className="font-black text-sm uppercase tracking-tighter mb-1 select-none">
-                  Par {transformedPost.author?.full_name || 'Rédaction KVK'}
+                <p className="font-black text-xs md:text-sm uppercase tracking-tight text-gray-900">
+                  {transformedPost.author?.full_name || 'Redaction KVK'}
                 </p>
-                <p className="text-gray-400 text-[10px] font-black uppercase tracking-[0.2em]">
+                <p className="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">
                   {new Date(transformedPost.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
                 </p>
               </div>
@@ -210,25 +247,43 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           </div>
         </header>
 
-        {/* Hero Image - Optimized */}
+        {/* Pub leaderboard — sous le header */}
+        <div className="container mx-auto px-3 md:px-4 max-w-3xl">
+          <AdBanner dataAdSlot="SLOT_ARTICLE_TOP" dataAdFormat="horizontal" />
+        </div>
+
+        {/* Hero Image — taille reduite sur mobile */}
         {transformedPost.featured_image && (
-          <div className="w-full h-[70vh] relative overflow-hidden mb-24 grayscale hover:grayscale-0 transition-all duration-1000 ease-in-out">
-            <img 
-              src={transformedPost.featured_image} 
-              alt={transformedPost.title} 
-              className="w-full h-full object-cover" 
-            />
-            <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-white via-white/40 to-transparent"></div>
+          <div className="container mx-auto px-3 md:px-4 max-w-2xl mb-6 md:mb-10">
+            <div className="relative w-full rounded-sm overflow-hidden shadow-lg max-h-[200px] md:max-h-[380px]">
+              <img
+                src={transformedPost.featured_image}
+                alt={transformedPost.title}
+                className="w-full h-full object-cover max-h-[200px] md:max-h-[380px]"
+                style={{ objectPosition: `${transformedPost.featured_image_focal_x ?? 50}% ${transformedPost.featured_image_focal_y ?? 50}%` }}
+              />
+            </div>
           </div>
         )}
 
         {/* Block Rendering Engine */}
         <div className="container mx-auto px-4 max-w-3xl">
+          <ShareBar title={transformedPost.title} slug={transformedPost.slug} />
           <div className="space-y-4">
             {sortedBlocks.map((block, index) => (
-              <BlockRenderer key={index} block={block} />
+              <Fragment key={index}>
+                <BlockRenderer block={block} />
+                {index === 2 && (
+                  <AdBanner dataAdSlot="SLOT_ARTICLE_MID" dataAdFormat="rectangle" />
+                )}
+              </Fragment>
             ))}
           </div>
+
+          {/* Pub avant les commentaires */}
+          <AdBanner dataAdSlot="SLOT_ARTICLE_BOTTOM" dataAdFormat="horizontal" />
+
+          <CommentsSection postId={transformedPost.id} />
         </div>
       </article>
 

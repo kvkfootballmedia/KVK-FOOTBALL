@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { Play } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 
 export default function PromoBanner() {
   const [featuredPosts, setFeaturedPosts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [daysLeft, setDaysLeft] = useState<number>(128);
 
   useEffect(() => {
     const fetchFeatured = async () => {
@@ -29,19 +29,26 @@ export default function PromoBanner() {
     };
 
     fetchFeatured();
+
+    // Calculate days left until June 11, 2026
+    const target = new Date('2026-06-11T00:00:00');
+    const now = new Date();
+    const diffTime = target.getTime() - now.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    setDaysLeft(diffDays > 0 ? diffDays : 0);
   }, []);
 
   return (
-    <div className="w-full mb-8 font-sans">
+    <div className="w-full mb-8 font-sans border-b border-gray-200">
       {/* 1. TOP BAR (Black) - Dynamic */}
       {featuredPosts.length > 0 && (
-        <div className="bg-black text-white text-[10px] font-black uppercase tracking-widest py-2">
-          <div className="container mx-auto px-4 flex gap-6 overflow-x-auto no-scrollbar whitespace-nowrap">
-            <span className="text-gray-400 shrink-0">À la une :</span>
+        <div className="bg-secondary text-white text-[10px] font-heading font-black uppercase tracking-widest py-2 border-b-2 border-primary">
+          <div className="container mx-auto px-4 flex gap-6 overflow-x-auto no-scrollbar whitespace-nowrap items-center">
+            <span className="bg-primary text-white px-2 py-0.5 shrink-0">DIRECT</span>
             {featuredPosts.map((post) => (
               <Link 
                 key={post.slug} 
-                href={`/post/${post.slug}`} 
+                href={`/article/${post.slug}`} 
                 className="hover:text-primary transition-colors shrink-0"
               >
                 {post.title}
@@ -51,46 +58,33 @@ export default function PromoBanner() {
         </div>
       )}
 
-      {/* 2. MIDDLE BANNER (Red/Image) */}
-      <div className="relative bg-red-900 text-white overflow-hidden h-32 md:h-40 flex items-center">
-        {/* Background Image / Gradient */}
-        <div className="absolute inset-0 bg-gradient-to-r from-red-950 via-red-900 to-red-800 z-0">
-          {/* Optional: Add a real background image here later */}
-          <div className="absolute inset-0 opacity-20 bg-[url('https://images.unsplash.com/photo-1518091043644-c1d4457512c6?q=80&w=2831&auto=format&fit=crop')] bg-cover bg-center mix-blend-overlay"></div>
+      {/* 2. MIDDLE BANNER */}
+      <div className="bg-white flex flex-row border-b border-gray-200">
+        <div className="flex-1 p-3 md:p-8 border-r border-gray-200 flex flex-col justify-center">
+          <div className="flex items-center gap-1.5 mb-1">
+            <span className="w-2 h-2 md:w-3 md:h-3 bg-primary shrink-0"></span>
+            <span className="text-primary font-heading font-bold uppercase tracking-widest text-[9px] md:text-xs">Evenement</span>
+          </div>
+          <h2 className="text-base md:text-4xl font-heading font-black uppercase tracking-tight text-secondary leading-tight">
+            COUPE DU MONDE 2026
+          </h2>
+          <p className="text-[9px] md:text-sm font-sans text-gray-500 uppercase tracking-widest mt-1">
+            USA / MEXIQUE / CANADA
+          </p>
         </div>
 
-        <div className="container mx-auto px-4 relative z-10 flex flex-col items-start justify-center h-full">
-           <h2 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter mb-1 font-[family-name:var(--font-inter)]">
-             COUPE DU MONDE 2026
-           </h2>
-           <p className="text-xs md:text-sm font-bold tracking-widest uppercase text-red-200 mb-4 opacity-90">
-             VIVRE L'HISTOIRE • USA / MEXIQUE / CANADA
-           </p>
-        </div>
-
-        {/* Floating Play Button / CA (Right side) - Removed "S'abonner" button */}
-        <div className="absolute right-0 top-0 h-full w-1/3 bg-gradient-to-l from-black/50 to-transparent z-10 hidden md:flex items-center justify-end px-12">
-        </div>
-      </div>
-
-      {/* 3. BOTTOM BAR (White/Red) */}
-      <div className="bg-white border-b border-gray-100 text-gray-900 py-4 shadow-sm">
-        <div className="container mx-auto px-4 flex flex-col md:flex-row items-center gap-4 md:gap-8">
-           {/* Event Logo / Name */}
-           <div className="text-lg font-black tracking-tighter uppercase border-r border-gray-200 pr-8 hidden md:block text-primary">
-             J-128
-           </div>
-
-           {/* Countdown / Main Text */}
-           <div className="flex items-baseline gap-3 uppercase font-black tracking-tight text-xl md:text-3xl">
-              <span className="text-4xl md:text-5xl font-mono text-primary">128</span>
-              <span>JOURS AVANT LE COUP D'ENVOI</span>
-           </div>
-           
-           {/* Decorative Element */}
-           <div className="ml-auto hidden md:block">
-            <div className="h-12 w-32 bg-gradient-to-l from-red-50 to-transparent rounded-full blur-xl"></div>
-           </div>
+        <div className="flex items-center justify-center p-3 md:p-8 bg-gray-50 w-1/3 md:w-1/3 shrink-0">
+          <div className="text-center">
+            <div className="text-[8px] md:text-sm font-heading font-bold text-gray-500 uppercase tracking-widest mb-1">
+              DANS
+            </div>
+            <div className="text-2xl md:text-6xl font-heading font-black text-primary leading-none">
+              {daysLeft}
+            </div>
+            <div className="text-[9px] md:text-xl font-heading font-black text-secondary uppercase">
+              JOURS
+            </div>
+          </div>
         </div>
       </div>
     </div>

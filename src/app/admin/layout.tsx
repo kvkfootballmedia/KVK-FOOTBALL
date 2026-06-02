@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabaseClient';
-import { LayoutDashboard, Users, FileText, LogOut, Shield } from 'lucide-react';
+import { LayoutDashboard, Users, FileText, LogOut, Shield, BarChart, Smartphone, Image, DollarSign, Search } from 'lucide-react';
 import { NotificationProvider } from '@/context/NotificationContext';
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -105,19 +105,52 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           >
             <FileText className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Nouveau
           </Link>
+          <Link 
+            href="/admin/stats" 
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/stats' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            <BarChart className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Statistiques
+          </Link>
+          <Link 
+            href="/admin/stories" 
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname?.startsWith('/admin/stories') ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            <Smartphone className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Stories
+          </Link>
           
+          <Link
+            href="/admin/media"
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/media' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+          >
+            <Image className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Mediatheque
+          </Link>
+
           {user?.role === 'admin' && (
-            <Link 
-              href="/admin/users" 
-              className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/users' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
-            >
-              <Users className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Staff
-            </Link>
+            <>
+              <Link
+                href="/admin/ads"
+                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/ads' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <DollarSign className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Publicites
+              </Link>
+              <Link
+                href="/admin/seo"
+                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/seo' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <Search className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> SEO
+              </Link>
+              <Link
+                href="/admin/users"
+                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/users' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+              >
+                <Users className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Staff
+              </Link>
+            </>
           )}
         </nav>
 
         <div className="hidden md:block mt-auto pt-8 border-t border-white/10">
-          <div className="flex items-center gap-4 mb-8">
+          <div className="flex items-center gap-4 mb-6">
              <div className="w-10 h-10 bg-primary flex items-center justify-center font-black text-xs uppercase italic">
                 {user?.full_name?.charAt(0)}
              </div>
@@ -129,6 +162,12 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </p>
              </div>
           </div>
+          <Link
+            href="/"
+            className="flex items-center gap-4 px-4 py-3 mb-2 w-full text-[10px] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/5 border border-emerald-500/20 rounded transition-all"
+          >
+            Voir le site
+          </Link>
           <button 
             onClick={handleLogout}
             className="flex items-center gap-4 px-4 py-3 w-full text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all"
@@ -138,16 +177,24 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
         
         {/* Mobile logout and profile (compact) */}
-        <div className="md:hidden flex items-center justify-between pt-4 border-t border-white/10">
+        <div className="md:hidden flex items-center justify-between pt-4 border-t border-white/10 gap-4">
            <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-primary flex items-center justify-center font-black text-[9px] uppercase italic">
                  {user?.full_name?.charAt(0)}
               </div>
               <span className="text-[9px] font-black uppercase tracking-widest truncate max-w-[80px]">{user?.full_name?.split(' ')[0]}</span>
            </div>
-           <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500">
-              <LogOut className="w-4 h-4" />
-           </button>
+           <div className="flex items-center gap-3">
+             <Link
+               href="/"
+               className="text-[9px] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 transition-all border border-emerald-500/30 px-2 py-1 rounded"
+             >
+               Voir le site
+             </Link>
+             <button onClick={handleLogout} className="p-2 text-gray-400 hover:text-red-500">
+                <LogOut className="w-4 h-4" />
+             </button>
+           </div>
         </div>
       </aside>
 
