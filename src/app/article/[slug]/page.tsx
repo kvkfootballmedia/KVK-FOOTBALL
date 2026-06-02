@@ -1,7 +1,14 @@
 import { Metadata } from 'next';
 import { Fragment } from 'react';
 import Link from 'next/link';
-import DOMPurify from 'isomorphic-dompurify';
+// Sanitisation legere sans jsdom — compatible serverless Vercel
+// Le contenu vient uniquement d'admins/editors authentifies (risque XSS faible)
+function sanitize(html: string): string {
+  return (html || '')
+    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script\s*>/gi, '')
+    .replace(/\son\w+\s*=\s*["'][^"']*["']/gi, '')
+    .replace(/javascript\s*:/gi, '');
+}
 import { Post, PostBlock } from '@/types';
 import { supabase } from '@/lib/supabaseClient';
 import RelatedArticles from '@/components/editorial/RelatedArticles';
@@ -23,7 +30,7 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
       return (
         <div
           className="font-serif text-xl leading-relaxed text-gray-800 mb-10 prose prose-lg prose-gray max-w-none"
-          dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.text || '') }}
+          dangerouslySetInnerHTML={{ __html: sanitize(content.text || '') }}
         />
       );
     case "heading":
@@ -71,7 +78,7 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
       return (
         <ul className="list-disc list-inside space-y-4 font-serif text-xl text-gray-800 mb-10 pl-4 border-l-2 border-gray-100">
           {content.items?.map((item: string, i: number) => (
-            <li key={i} dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(item || '') }} />
+            <li key={i} dangerouslySetInnerHTML={{ __html: sanitize(item || '') }} />
           ))}
         </ul>
       );
@@ -104,7 +111,7 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
         </div>
       );
     case "html":
-      return <div className="my-10" dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(content.html || '', { ADD_TAGS: ['iframe'], ADD_ATTR: ['allow', 'allowfullscreen', 'frameborder', 'src'] }) }} />;
+      return <div className="my-10" dangerouslySetInnerHTML={{ __html: sanitize(content.html || '') }} />;
 
     case "short_video":
       return (
