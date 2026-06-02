@@ -50,11 +50,16 @@ function TikTokEmbed({ url, caption }: { url: string; caption?: string }) {
   const videoId = extractTikTokVideoId(url);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // Re-traiter les embeds TikTok si le script est déjà chargé
+  // Re-traiter les embeds si embed.js est déjà chargé (navigation SPA)
   useEffect(() => {
-    if (typeof window !== 'undefined' && (window as any).tiktok) {
-      try { (window as any).tiktok.reload(); } catch {}
-    }
+    if (typeof window === 'undefined') return;
+    const win = window as any;
+    // TikTok expose __tiktok_embed_inject_tep après chargement du script
+    try {
+      if (typeof win.__tiktok_embed_inject_tep === 'function') {
+        win.__tiktok_embed_inject_tep({});
+      }
+    } catch {}
   }, [videoId]);
 
   if (!videoId) return <EmbedError />;
