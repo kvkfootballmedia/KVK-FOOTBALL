@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { use, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -26,7 +26,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
       
       if (!session) {
         showNotification('Session expirée. Veuillez vous reconnecter.', 'error');
-        router.push('/admin/login');
+        router.push('/kv0980gp-coffre/login');
         return;
       }
       
@@ -86,7 +86,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
   const handleSave = async (data: any): Promise<void> => {
     try {
       await api.posts.save({ ...data, id });
-      router.push('/admin');
+      router.push('/kv0980gp-coffre');
       router.refresh();
     } catch (err) {
       console.error('Error saving article:', err);
@@ -98,7 +98,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     try {
       await api.posts.delete(postId);
       showNotification('Article supprimé avec succès.', 'success');
-      router.push('/admin');
+      router.push('/kv0980gp-coffre');
     } catch (err) {
       console.error('Error deleting:', err);
       showNotification('Erreur lors de la suppression.', 'error');
@@ -117,7 +117,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     return (
       <div className="py-24 text-center">
         <h1 className="text-2xl font-black uppercase tracking-tighter">Article introuvable</h1>
-        <Link href="/admin" className="mt-8 inline-block text-primary font-black uppercase tracking-widest text-xs border-b-2 border-primary">
+        <Link href="/kv0980gp-coffre" className="mt-8 inline-block text-primary font-black uppercase tracking-widest text-xs border-b-2 border-primary">
           Retour au Dashboard
         </Link>
       </div>
@@ -128,7 +128,7 @@ export default function EditArticlePage({ params }: { params: Promise<{ id: stri
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       <div className="mb-12 flex items-center justify-between border-b-2 border-gray-900 pb-8">
         <div className="flex items-center gap-4">
-          <Link href="/admin" className="text-gray-400 hover:text-black transition-colors">
+          <Link href="/kv0980gp-coffre" className="text-gray-400 hover:text-black transition-colors">
             <ChevronLeft className="w-8 h-8" />
           </Link>
           <div>

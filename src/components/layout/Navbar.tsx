@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -21,7 +21,7 @@ export default function Navbar() {
   };
 
   // Do not render the navbar in the admin panel
-  if (pathname?.startsWith('/admin')) {
+  if (pathname?.startsWith('/kv0980gp-coffre')) {
     return null;
   }
 

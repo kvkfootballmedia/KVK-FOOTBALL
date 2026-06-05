@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -82,7 +82,7 @@ export default function AdminDashboard() {
           <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic leading-none">Espace Rédaction</h1>
         </div>
         <Link 
-          href="/admin/new" 
+          href="/kv0980gp-coffre/new" 
           className="w-full md:w-auto bg-primary text-white px-6 md:px-10 py-4 md:py-5 font-black uppercase tracking-widest text-[10px] md:text-xs hover:bg-black transition-all shadow-[0_10px_30px_rgba(196,18,46,0.3)] flex items-center justify-center gap-3"
         >
           <Plus className="w-4 h-4" /> Nouvel Article
@@ -195,7 +195,7 @@ export default function AdminDashboard() {
                     <td className="px-4 md:px-8 py-4 md:py-6 text-right">
                       <div className="flex justify-end gap-1 md:gap-3 md:opacity-0 group-hover:opacity-100 transition-opacity">
                         <Link href={`/article/${post.slug}`} className="p-2 text-gray-400 hover:text-gray-900 border border-gray-50 md:border-transparent hover:border-gray-100 transition-all rounded-full"><Eye className="w-3.5 h-3.5 md:w-4 md:h-4" /></Link>
-                        <Link href={`/admin/edit/${post.id}`} className="p-2 text-gray-400 hover:text-primary border border-gray-50 md:border-transparent hover:border-primary/20 transition-all rounded-full"><Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" /></Link>
+                        <Link href={`/kv0980gp-coffre/edit/${post.id}`} className="p-2 text-gray-400 hover:text-primary border border-gray-50 md:border-transparent hover:border-primary/20 transition-all rounded-full"><Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" /></Link>
                       </div>
                     </td>
                   </tr>

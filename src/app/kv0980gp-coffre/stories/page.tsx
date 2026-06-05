@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -239,7 +239,7 @@ export default function AdminStories() {
               <p className="text-[10px] font-black uppercase text-gray-400 tracking-widest mb-6">Ordre: {group.sort_order}</p>
 
               <Link 
-                href={`/admin/stories/${group.id}`}
+                href={`/kv0980gp-coffre/stories/${group.id}`}
                 className="w-full py-3 bg-gray-50 hover:bg-primary hover:text-white rounded-xl text-xs font-black uppercase tracking-widest text-gray-900 flex items-center justify-center gap-2 transition-colors border border-gray-100"
               >
                  Éditer les slides <ChevronRight className="w-4 h-4" />

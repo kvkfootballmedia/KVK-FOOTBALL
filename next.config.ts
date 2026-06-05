@@ -29,13 +29,13 @@ const nextConfig: NextConfig = {
             value: [
               "default-src 'self'",
               // Scripts — TikTok CDN mondial (US, EU, Asie, Moyen-Orient, Afrique)
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://www.googletagmanager.com https://*.tiktok.com https://*.ttwstatic.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokstatic.com https://*.tiktokv.com https://*.byteoversea.com https://*.ibytedtos.com https://*.byteimg.com https://*.bytecdn.com https://*.muscdn.com https://*.snssdk.com https://*.bytedance.com https://*.bytegoofy.com https://*.volces.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://partner.googleadservices.com https://adservice.google.com https://*.doubleclick.net https://www.googletagmanager.com https://*.tiktok.com https://*.ttwstatic.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokstatic.com https://*.tiktokv.com https://*.byteoversea.com https://*.ibytedtos.com https://*.byteimg.com https://*.bytecdn.com https://*.muscdn.com https://*.snssdk.com https://*.bytedance.com https://*.bytegoofy.com https://*.volces.com",
               "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://*.tiktok.com https://*.ttwstatic.com https://*.tiktokcdn.com https://*.tiktokstatic.com",
               "font-src 'self' https://fonts.gstatic.com",
               "img-src * data: blob:",
               // Connexions API — tous CDN TikTok
-              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://kvkfootball.fr https://*.tiktok.com https://*.ttwstatic.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokstatic.com https://*.tiktokv.com https://*.byteoversea.com https://*.ibytedtos.com https://*.byteimg.com https://*.snssdk.com https://*.volces.com https://*.muscdn.com",
-              "frame-src https://www.youtube.com https://*.tiktok.com https://pagead2.googlesyndication.com",
+              "connect-src 'self' https://*.supabase.co wss://*.supabase.co https://kvk-football.com https://*.tiktok.com https://*.ttwstatic.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokstatic.com https://*.tiktokv.com https://*.byteoversea.com https://*.ibytedtos.com https://*.byteimg.com https://*.snssdk.com https://*.volces.com https://*.muscdn.com https://pagead2.googlesyndication.com https://adservice.google.com https://*.doubleclick.net https://googleads.g.doubleclick.net https://api.web3forms.com",
+              "frame-src https://www.youtube.com https://*.tiktok.com https://pagead2.googlesyndication.com https://tpc.googlesyndication.com https://*.doubleclick.net https://www.google.com https://googleads.g.doubleclick.net",
               // Medias video TikTok
               "media-src 'self' blob: https://*.supabase.co https://*.tiktok.com https://*.tiktokcdn.com https://*.tiktokcdn-us.com https://*.tiktokv.com https://*.byteoversea.com https://*.ibytedtos.com",
               "object-src 'none'",

@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Twitter, Instagram, Youtube } from 'lucide-react';
+import { Twitter, Facebook, Youtube } from 'lucide-react';
 
 export default function Footer() {
   const competitions = [
@@ -36,13 +36,13 @@ export default function Footer() {
             
             {/* Social handles */}
             <div className="flex gap-3 pt-2">
-              <a href="#" aria-label="Twitter" className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 transition-all duration-200 shadow-sm">
+              <a href="https://x.com/kvkfootball?s=21" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)" className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 transition-all duration-200 shadow-sm">
                 <Twitter size={18} />
               </a>
-              <a href="#" aria-label="Instagram" className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 transition-all duration-200 shadow-sm">
-                <Instagram size={18} />
+              <a href="https://www.facebook.com/kvkfootball?mibextid=wwXIfr&rdid=Hslh8jKodP98eG2p&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F1CgQJDr1Pk%2F%3Fmibextid%3DwwXIfr#" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 transition-all duration-200 shadow-sm">
+                <Facebook size={18} />
               </a>
-              <a href="#" aria-label="YouTube" className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 transition-all duration-200 shadow-sm">
+              <a href="https://www.youtube.com/@kvk100football" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="w-10 h-10 flex items-center justify-center rounded-xl bg-[#1E293B] border border-[#334155] text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 transition-all duration-200 shadow-sm">
                 <Youtube size={18} />
               </a>
             </div>
@@ -91,7 +91,7 @@ export default function Footer() {
             <ul className="space-y-3.5 text-xs font-semibold text-[#94A3B8]">
               <li><Link href="/about" className="hover:text-red-500 transition-colors">Mentions légales</Link></li>
               <li><Link href="/privacy" className="hover:text-red-500 transition-colors">Confidentialité</Link></li>
-              <li><Link href="/contact" className="hover:text-red-500 transition-colors">Contact</Link></li>
+              <li><a href="mailto:kvkfootballmedia@gmail.com" className="hover:text-red-500 transition-colors">Contact</a></li>
             </ul>
           </div>
         </div>

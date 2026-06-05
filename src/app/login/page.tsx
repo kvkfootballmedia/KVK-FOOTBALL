@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -192,7 +192,7 @@ export default function LoginPage() {
 
           {isLogin && (
             <div className="mt-8 text-center">
-               <Link href="/admin/login" className="text-[9px] font-black uppercase tracking-widest text-gray-300 hover:text-primary transition-colors">
+               <Link href="/kv0980gp-coffre/login" className="text-[9px] font-black uppercase tracking-widest text-gray-300 hover:text-primary transition-colors">
                   Accès Journalistes / Staff
                </Link>
             </div>

@@ -29,7 +29,7 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
     case "paragraph":
       return (
         <div
-          className="font-serif text-xl leading-relaxed text-gray-800 mb-10 prose prose-lg prose-gray max-w-none"
+          className="font-serif text-base md:text-xl leading-relaxed text-gray-800 mb-10 prose prose-lg prose-gray max-w-none"
           dangerouslySetInnerHTML={{ __html: sanitize(content.text || '') }}
         />
       );
@@ -211,69 +211,69 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
     <>
       <ViewTracker postId={transformedPost.id} />
       <article className="pb-32 bg-white">
-        {/* Editorial Header — centré */}
-        <header className="py-8 md:py-20 bg-white border-b border-gray-100">
-          <div className="container mx-auto px-3 md:px-4 max-w-3xl text-center">
+
+        {/* 1. Bloc pub — tout en haut */}
+        <div className="container mx-auto px-3 md:px-4 max-w-3xl pt-4">
+          <AdBanner dataAdSlot="SLOT_ARTICLE_TOP" dataAdFormat="horizontal" />
+        </div>
+
+        {/* 2. Header éditorial */}
+        <header className="pt-4 pb-3 md:pt-10 md:pb-6 bg-white">
+          <div className="container mx-auto px-3 md:px-4 max-w-3xl">
             {/* Catégorie */}
-            <div className="flex flex-wrap justify-center gap-2 md:gap-4 mb-4 md:mb-6">
+            <div className="flex flex-wrap gap-2 md:gap-4 mb-2 md:mb-4">
               {transformedPost.categories.map((cat: any, i: number) => (
                 <Link key={i} href={`/category/${cat.slug}`}
                   className="inline-flex items-center gap-1 text-primary font-black uppercase tracking-[0.2em] text-[9px] md:text-[10px] hover:underline transition-all">
-                  <span className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-primary inline-block" />
+                  <span className="w-1 h-1 rounded-full bg-primary inline-block" />
                   {cat.name}
                 </Link>
               ))}
             </div>
 
             {/* Titre */}
-            <h1 className="text-xl md:text-5xl font-black mb-4 md:mb-6 leading-tight tracking-tight uppercase text-gray-900">
+            <h1 className="text-xl md:text-5xl font-black mb-2 md:mb-4 leading-tight tracking-tight uppercase text-gray-900">
               {transformedPost.title}
             </h1>
 
-            {/* Excerpt */}
+            {/* Excerpt — desktop uniquement */}
             {transformedPost.excerpt && (
-              <p className="font-serif text-sm md:text-lg text-gray-500 leading-relaxed mb-5 md:mb-8 max-w-xl mx-auto hidden sm:block">
+              <p className="font-serif text-sm md:text-lg text-gray-500 leading-relaxed mb-3 md:mb-5 max-w-xl hidden sm:block">
                 {transformedPost.excerpt}
               </p>
             )}
 
-            {/* Byline */}
-            <div className="flex items-center justify-center gap-2 md:gap-3 pt-4 md:pt-6 border-t border-gray-100">
-              <div className="w-6 h-6 md:w-8 md:h-8 rounded-full bg-gray-900 flex items-center justify-center text-white text-[10px] md:text-xs font-black uppercase select-none shrink-0">
+            {/* Auteur + Date — petits, inline */}
+            <div className="flex items-center gap-2 border-t border-gray-100 pt-2 md:pt-3">
+              <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-gray-800 flex items-center justify-center text-white text-[8px] font-black uppercase select-none shrink-0">
                 {(transformedPost.author?.full_name || 'K')[0]}
               </div>
-              <div className="text-left">
-                <p className="font-black text-xs md:text-sm uppercase tracking-tight text-gray-900">
-                  {transformedPost.author?.full_name || 'Redaction KVK'}
-                </p>
-                <p className="text-gray-400 text-[9px] md:text-[10px] font-bold uppercase tracking-widest">
-                  {new Date(transformedPost.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-              </div>
+              <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                {transformedPost.author?.full_name || 'Rédaction KVK'}
+              </p>
+              <span className="text-gray-200 text-[9px]">•</span>
+              <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-widest text-gray-400">
+                {new Date(transformedPost.published_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}
+              </p>
             </div>
           </div>
         </header>
 
-        {/* Pub leaderboard — sous le header */}
-        <div className="container mx-auto px-3 md:px-4 max-w-3xl">
-          <AdBanner dataAdSlot="SLOT_ARTICLE_TOP" dataAdFormat="horizontal" />
-        </div>
-
-        {/* Hero Image — taille reduite sur mobile */}
+        {/* 3. Image principale — collée au titre */}
         {transformedPost.featured_image && (
-          <div className="container mx-auto px-3 md:px-4 max-w-2xl mb-6 md:mb-10">
-            <div className="relative w-full rounded-sm overflow-hidden shadow-lg max-h-[200px] md:max-h-[380px]">
+          <div className="container mx-auto px-3 md:px-4 max-w-3xl mb-4 md:mb-8">
+            <div className="relative w-full rounded-sm overflow-hidden shadow-md max-h-[210px] md:max-h-[420px]">
               <img
                 src={transformedPost.featured_image}
                 alt={transformedPost.title}
-                className="w-full h-full object-cover max-h-[200px] md:max-h-[380px]"
+                className="w-full h-full object-cover max-h-[210px] md:max-h-[420px]"
                 style={{ objectPosition: `${transformedPost.featured_image_focal_x ?? 50}% ${transformedPost.featured_image_focal_y ?? 50}%` }}
               />
             </div>
           </div>
         )}
 
-        {/* Block Rendering Engine */}
+        {/* 4. Contenu */}
         <div className="container mx-auto px-4 max-w-3xl">
           <ShareBar title={transformedPost.title} slug={transformedPost.slug} />
           <div className="space-y-4">
@@ -290,7 +290,37 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {/* Pub avant les commentaires */}
           <AdBanner dataAdSlot="SLOT_ARTICLE_BOTTOM" dataAdFormat="horizontal" />
 
+          {/* Banderole 1xBet */}
+          <div className="my-6">
+            <a
+              href="https://reffpa.com/L?tag=d_51222m_1599c_&site=51222&ad=1599"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/1x Bet.png"
+                alt="1xBet"
+                className="w-full rounded-sm object-cover"
+              />
+            </a>
+          </div>
+
           <CommentsSection postId={transformedPost.id} />
+
+          {/* Banderole WhatsApp — après les commentaires */}
+          <div className="mt-8">
+            <a
+              href="https://wa.me/221765948961"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <img
+                src="/whatsapp.png"
+                alt="Rejoindre sur WhatsApp"
+                className="w-full rounded-sm object-cover"
+              />
+            </a>
+          </div>
         </div>
       </article>
 

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -51,7 +51,7 @@ export default function AdminLoginPage() {
         return;
       }
 
-      router.push('/admin');
+      router.push('/kv0980gp-coffre');
       router.refresh();
 
     } catch (err: any) {

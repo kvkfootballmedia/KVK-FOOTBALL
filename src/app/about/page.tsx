@@ -25,7 +25,7 @@ export default function AboutPage() {
 
       <div className="mt-24 pt-12 border-t-4 border-primary text-center">
         <p className="font-bold uppercase tracking-widest text-sm mb-4">Rejoignez l'aventure</p>
-        <p className="text-gray-500 italic">Pour toute collaboration ou proposition de sujet : contact@kvkfootball.fr</p>
+        <p className="text-gray-500 italic">Pour toute collaboration ou proposition de sujet : <a href="mailto:kvkfootballmedia@gmail.com" className="text-primary hover:underline">kvkfootballmedia@gmail.com</a></p>
       </div>
     </div>
   );

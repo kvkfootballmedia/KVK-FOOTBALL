@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -52,7 +52,7 @@ export default function IdentityManagementPage() {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        router.push('/admin/login');
+        router.push('/kv0980gp-coffre/login');
         return;
       }
 
@@ -65,7 +65,7 @@ export default function IdentityManagementPage() {
 
       if (error || !profile) {
         console.error('Profile error:', error);
-        router.push('/admin/login');
+        router.push('/kv0980gp-coffre/login');
         return;
       }
 
@@ -189,7 +189,7 @@ export default function IdentityManagementPage() {
         <Shield className="w-16 h-16 mx-auto mb-6 text-primary opacity-20" />
         <h1 className="text-3xl font-black uppercase tracking-tighter">Accès Restreint</h1>
         <p className="mt-4 text-gray-400 font-serif italic">Seuls les administrateurs peuvent gérer les identités.</p>
-        <button onClick={() => router.push('/admin')} className="mt-8 text-xs font-black uppercase tracking-widest border-b-2 border-primary">Retour au Dashboard</button>
+        <button onClick={() => router.push('/kv0980gp-coffre')} className="mt-8 text-xs font-black uppercase tracking-widest border-b-2 border-primary">Retour au Dashboard</button>
       </div>
     );
   }

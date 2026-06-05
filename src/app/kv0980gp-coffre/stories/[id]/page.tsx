@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect, use } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -63,7 +63,7 @@ export default function AdminStorySlides({ params }: { params: Promise<{ id: str
 
     } catch (err) {
       console.error(err);
-      router.push('/admin/stories');
+      router.push('/kv0980gp-coffre/stories');
     } finally {
       setLoading(false);
     }
@@ -179,7 +179,7 @@ export default function AdminStorySlides({ params }: { params: Promise<{ id: str
   return (
     <div className="max-w-5xl mx-auto">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin/stories" className="p-2 text-gray-400 hover:text-primary transition-colors bg-white hover:bg-white/50 rounded-xl shadow-sm border border-gray-100/50">
+        <Link href="/kv0980gp-coffre/stories" className="p-2 text-gray-400 hover:text-primary transition-colors bg-white hover:bg-white/50 rounded-xl shadow-sm border border-gray-100/50">
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <div className="flex items-center gap-4">

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -106,7 +106,7 @@ export default function AdminStats() {
   return (
     <div className="max-w-7xl mx-auto">
       <div className="flex items-center gap-4 mb-8 md:mb-12">
-        <Link href="/admin" className="p-2 text-gray-400 hover:text-primary transition-colors bg-white rounded-xl shadow-sm border border-gray-100">
+        <Link href="/kv0980gp-coffre" className="p-2 text-gray-400 hover:text-primary transition-colors bg-white rounded-xl shadow-sm border border-gray-100">
           <ChevronLeft className="w-5 h-5" />
         </Link>
         <div>

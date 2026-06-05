@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
@@ -15,7 +15,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   useEffect(() => {
     // Skip protection for login page
-    if (pathname === '/admin/login') {
+    if (pathname === '/kv0980gp-coffre/login') {
       setIsAuthenticated(true);
       return;
     }
@@ -25,7 +25,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         const { data: { session } } = await supabase.auth.getSession();
         
         if (!session) {
-          router.push('/admin/login');
+          router.push('/kv0980gp-coffre/login');
           return;
         }
 
@@ -39,7 +39,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         if (error || !profile || !['admin', 'editor', 'author'].includes(profile.role)) {
           console.error("Auth check failed:", error);
           await supabase.auth.signOut();
-          router.push('/admin/login');
+          router.push('/kv0980gp-coffre/login');
           return;
         }
 
@@ -47,7 +47,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         setIsAuthenticated(true);
       } catch (err) {
         console.error("Unexpected auth error:", err);
-        router.push('/admin/login');
+        router.push('/kv0980gp-coffre/login');
       }
     };
 
@@ -56,7 +56,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || !session) {
-        router.push('/admin/login');
+        router.push('/kv0980gp-coffre/login');
       }
     });
 
@@ -67,10 +67,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    router.push('/admin/login');
+    router.push('/kv0980gp-coffre/login');
   };
 
-  if (!isAuthenticated && pathname !== '/admin/login') {
+  if (!isAuthenticated && pathname !== '/kv0980gp-coffre/login') {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full"></div>
@@ -79,7 +79,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   // If on login page, just render children
-  if (pathname === '/admin/login') {
+  if (pathname === '/kv0980gp-coffre/login') {
     return <>{children}</>;
   }
 
@@ -94,33 +94,33 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
           <Link 
-            href="/admin" 
-            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            href="/kv0980gp-coffre" 
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
             <LayoutDashboard className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Dashboard
           </Link>
           <Link 
-            href="/admin/new" 
-            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/new' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            href="/kv0980gp-coffre/new" 
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre/new' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
             <FileText className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Nouveau
           </Link>
           <Link 
-            href="/admin/stats" 
-            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/stats' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            href="/kv0980gp-coffre/stats" 
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre/stats' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
             <BarChart className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Statistiques
           </Link>
           <Link 
-            href="/admin/stories" 
-            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname?.startsWith('/admin/stories') ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            href="/kv0980gp-coffre/stories" 
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname?.startsWith('/kv0980gp-coffre/stories') ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
             <Smartphone className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Stories
           </Link>
           
           <Link
-            href="/admin/media"
-            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/media' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+            href="/kv0980gp-coffre/media"
+            className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre/media' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
           >
             <Image className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Mediatheque
           </Link>
@@ -128,20 +128,20 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {user?.role === 'admin' && (
             <>
               <Link
-                href="/admin/ads"
-                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/ads' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                href="/kv0980gp-coffre/ads"
+                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre/ads' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
                 <DollarSign className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Publicites
               </Link>
               <Link
-                href="/admin/seo"
-                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/seo' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                href="/kv0980gp-coffre/seo"
+                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre/seo' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
                 <Search className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> SEO
               </Link>
               <Link
-                href="/admin/users"
-                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/admin/users' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
+                href="/kv0980gp-coffre/users"
+                className={`flex items-center gap-3 md:gap-4 px-4 py-2.5 md:py-3 text-[9px] md:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${pathname === '/kv0980gp-coffre/users' ? 'bg-primary text-white shadow-xl' : 'text-gray-400 hover:text-white hover:bg-white/5'}`}
               >
                 <Users className="shrink-0 w-3.5 h-3.5 md:w-4 md:h-4" /> Staff
               </Link>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -57,7 +57,7 @@ export default function NewArticlePage() {
       // ✅ SUCCESS: Redirect to edit page to avoid "Duplicate Slug" on re-save
       if (savedPost && savedPost.id) {
          showNotification('Article enregistré !', 'success');
-         router.push(`/admin/edit/${savedPost.id}`);
+         router.push(`/kv0980gp-coffre/edit/${savedPost.id}`);
       }
     } catch (error) {
       console.error(error);
@@ -69,7 +69,7 @@ export default function NewArticlePage() {
     <div className="container mx-auto px-4 py-12 max-w-5xl">
       <div className="mb-12 flex items-center justify-between border-b-2 border-gray-900 pb-8">
         <div className="flex items-center gap-4">
-          <Link href="/admin" className="text-gray-400 hover:text-black transition-colors">
+          <Link href="/kv0980gp-coffre" className="text-gray-400 hover:text-black transition-colors">
             <ChevronLeft className="w-8 h-8" />
           </Link>
           <div>
