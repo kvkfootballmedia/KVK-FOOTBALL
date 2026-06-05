@@ -91,7 +91,7 @@ export default function Footer() {
             <ul className="space-y-3.5 text-xs font-semibold text-[#94A3B8]">
               <li><Link href="/about" className="hover:text-red-500 transition-colors">Mentions légales</Link></li>
               <li><Link href="/privacy" className="hover:text-red-500 transition-colors">Confidentialité</Link></li>
-              <li><a href="mailto:kvkfootballmedia@gmail.com" className="hover:text-red-500 transition-colors">Contact</a></li>
+              <li><Link href="/contact" className="hover:text-red-500 transition-colors">Contact</Link></li>
             </ul>
           </div>
         </div>
