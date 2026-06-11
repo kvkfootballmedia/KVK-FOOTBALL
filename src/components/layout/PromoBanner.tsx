@@ -62,8 +62,10 @@ export default function PromoBanner() {
       <div className="bg-white flex flex-row border-b border-gray-200">
         <div className="flex-1 p-3 md:p-8 border-r border-gray-200 flex flex-col justify-center">
           <div className="flex items-center gap-1.5 mb-1">
-            <span className="w-2 h-2 md:w-3 md:h-3 bg-primary shrink-0"></span>
-            <span className="text-primary font-heading font-bold uppercase tracking-widest text-[9px] md:text-xs">Evenement</span>
+            <span className={`w-2 h-2 md:w-3 md:h-3 shrink-0 ${daysLeft === 0 ? 'bg-primary animate-ping' : 'bg-primary'}`}></span>
+            <span className="text-primary font-heading font-bold uppercase tracking-widest text-[9px] md:text-xs">
+              {daysLeft === 0 ? '🔴 EN DIRECT' : 'Evenement'}
+            </span>
           </div>
           <h2 className="text-base md:text-4xl font-heading font-black uppercase tracking-tight text-secondary leading-tight">
             COUPE DU MONDE 2026
@@ -73,18 +75,32 @@ export default function PromoBanner() {
           </p>
         </div>
 
-        <div className="flex items-center justify-center p-3 md:p-8 bg-gray-50 w-1/3 md:w-1/3 shrink-0">
-          <div className="text-center">
-            <div className="text-[8px] md:text-sm font-heading font-bold text-gray-500 uppercase tracking-widest mb-1">
-              DANS
+        <div className={`flex items-center justify-center p-3 md:p-8 w-1/3 md:w-1/3 shrink-0 ${daysLeft === 0 ? 'bg-primary' : 'bg-gray-50'}`}>
+          {daysLeft === 0 ? (
+            <div className="text-center animate-pulse">
+              <div className="text-[8px] md:text-xs font-heading font-black text-white/80 uppercase tracking-widest mb-1">
+                C'EST
+              </div>
+              <div className="text-xl md:text-5xl font-heading font-black text-white leading-none">
+                JOUR J
+              </div>
+              <div className="text-[8px] md:text-xs font-heading font-black text-white/80 uppercase tracking-widest mt-1">
+                ÇA COMMENCE !
+              </div>
             </div>
-            <div className="text-2xl md:text-6xl font-heading font-black text-primary leading-none">
-              {daysLeft}
+          ) : (
+            <div className="text-center">
+              <div className="text-[8px] md:text-sm font-heading font-bold text-gray-500 uppercase tracking-widest mb-1">
+                DANS
+              </div>
+              <div className="text-2xl md:text-6xl font-heading font-black text-primary leading-none">
+                {daysLeft}
+              </div>
+              <div className="text-[9px] md:text-xl font-heading font-black text-secondary uppercase">
+                JOURS
+              </div>
             </div>
-            <div className="text-[9px] md:text-xl font-heading font-black text-secondary uppercase">
-              JOURS
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

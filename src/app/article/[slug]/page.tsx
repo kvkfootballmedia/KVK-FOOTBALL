@@ -17,6 +17,7 @@ import ShortVideoBlock from '@/components/editorial/ShortVideoBlock';
 import ShareBar from '@/components/editorial/ShareBar';
 import AdBanner from '@/components/ads/AdBanner';
 import ViewTracker from '@/components/editorial/ViewTracker';
+import TwitterEmbed from '@/components/editorial/TwitterEmbed';
 
 // Revalidate every 5 minutes as per instructions
 export const revalidate = 300;
@@ -82,34 +83,40 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
           ))}
         </ul>
       );
-    case "embed":
-      const getEmbedUrl = (url: string) => {
+    case "embed": {
+      const url = content.url || '';
+
+      // Twitter / X
+      if (url.includes('twitter.com') || url.includes('x.com')) {
+        return <TwitterEmbed url={url} />;
+      }
+
+      // YouTube
+      const getEmbedUrl = (u: string) => {
         try {
-          // Handle YouTube
-          if (url.includes('youtube.com/watch')) {
-            const videoId = new URL(url).searchParams.get('v');
+          if (u.includes('youtube.com/watch')) {
+            const videoId = new URL(u).searchParams.get('v');
             if (videoId) return `https://www.youtube.com/embed/${videoId}`;
           }
-          if (url.includes('youtu.be/')) {
-            const videoId = url.split('youtu.be/')[1];
+          if (u.includes('youtu.be/')) {
+            const videoId = u.split('youtu.be/')[1];
             if (videoId) return `https://www.youtube.com/embed/${videoId}`;
           }
-          return url;
-        } catch {
-          return url;
-        }
+          return u;
+        } catch { return u; }
       };
 
       return (
         <div className="my-16 aspect-video bg-gray-100 rounded-sm overflow-hidden shadow-xl">
-          <iframe 
-            src={getEmbedUrl(content.url)} 
+          <iframe
+            src={getEmbedUrl(url)}
             className="w-full h-full"
             allowFullScreen
             title="Embedded content"
           />
         </div>
       );
+    }
     case "html":
       return <div className="my-10" dangerouslySetInnerHTML={{ __html: sanitize(content.html || '') }} />;
 
@@ -290,37 +297,17 @@ export default async function ArticlePage({ params }: { params: Promise<{ slug: 
           {/* Pub avant les commentaires */}
           <AdBanner dataAdSlot="SLOT_ARTICLE_BOTTOM" dataAdFormat="horizontal" />
 
-          {/* Banderole 1xBet */}
-          <div className="my-6">
-            <a
-              href="https://reffpa.com/L?tag=d_51222m_1599c_&site=51222&ad=1599"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src="/1x Bet.png"
-                alt="1xBet"
-                className="w-full rounded-sm object-cover"
-              />
+          {/* Banderoles 1xBet + WhatsApp */}
+          <div className="flex flex-col gap-2 my-6 max-w-xl mx-auto w-full">
+            <a href="https://reffpa.com/L?tag=d_51222m_1599c_&site=51222&ad=1599" target="_blank" rel="noopener noreferrer">
+              <img src="/1x Bet.png" alt="1xBet" className="w-full rounded-sm" />
+            </a>
+            <a href="https://wa.me/221765948961" target="_blank" rel="noopener noreferrer">
+              <img src="/whatsapp.png" alt="Rejoindre sur WhatsApp" className="w-full rounded-sm" />
             </a>
           </div>
 
           <CommentsSection postId={transformedPost.id} />
-
-          {/* Banderole WhatsApp — après les commentaires */}
-          <div className="mt-8">
-            <a
-              href="https://wa.me/221765948961"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <img
-                src="/whatsapp.png"
-                alt="Rejoindre sur WhatsApp"
-                className="w-full rounded-sm object-cover"
-              />
-            </a>
-          </div>
         </div>
       </article>
 

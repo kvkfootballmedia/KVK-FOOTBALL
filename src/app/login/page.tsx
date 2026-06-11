@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabaseClient';
-import { Lock, Mail, User, ArrowRight, Loader2, CheckCircle2 } from 'lucide-react';
+import { Lock, Mail, User, ArrowRight, Loader2, CheckCircle2, LogOut, Calendar } from 'lucide-react';
 import Link from 'next/link';
 
 export default function LoginPage() {
@@ -14,18 +14,67 @@ export default function LoginPage() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const [profile, setProfile] = useState<any>(null);
   const router = useRouter();
 
   useEffect(() => {
-    // Check if already logged in
     const checkUser = async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
-        router.push('/');
+        const { data } = await supabase
+          .from('profiles')
+          .select('full_name, email, created_at, role')
+          .eq('id', session.user.id)
+          .single();
+        setProfile(data || { email: session.user.email, created_at: session.user.created_at });
       }
     };
     checkUser();
-  }, [router]);
+  }, []);
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setProfile(null);
+    router.refresh();
+  };
+
+  if (profile) {
+    return (
+      <div className="min-h-[80vh] flex items-center justify-center bg-white px-4 py-20 mt-10">
+        <div className="max-w-md w-full text-center">
+          <Link href="/" className="inline-block mb-8">
+            <span className="text-4xl font-black tracking-tighter text-primary">KVK<span className="text-gray-900">FOOTBALL</span></span>
+          </Link>
+
+          <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-gray-200/50 border border-gray-100">
+            {/* Avatar */}
+            <div className="w-20 h-20 rounded-full bg-gray-900 flex items-center justify-center text-white text-3xl font-black uppercase mx-auto mb-6">
+              {(profile.full_name || profile.email || '?')[0]}
+            </div>
+
+            <h2 className="text-2xl font-black uppercase tracking-tighter text-gray-900 mb-1">
+              {profile.full_name || 'Membre'}
+            </h2>
+            <p className="text-sm text-gray-400 font-serif mb-6">{profile.email}</p>
+
+            <div className="flex items-center justify-center gap-2 text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-8">
+              <Calendar className="w-3 h-3" />
+              Membre depuis {new Date(profile.created_at).toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' })}
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <Link href="/" className="w-full py-4 bg-gray-900 text-white font-black uppercase tracking-[0.3em] text-[10px] rounded-2xl hover:bg-primary transition-all text-center">
+                Retour au site
+              </Link>
+              <button onClick={handleLogout} className="w-full py-4 border border-gray-100 text-gray-400 font-black uppercase tracking-[0.3em] text-[10px] rounded-2xl hover:border-red-200 hover:text-red-500 transition-all flex items-center justify-center gap-2">
+                <LogOut className="w-3.5 h-3.5" /> Se déconnecter
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();

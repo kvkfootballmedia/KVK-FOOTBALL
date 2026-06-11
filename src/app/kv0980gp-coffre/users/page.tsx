@@ -11,8 +11,10 @@ import ConfirmModal from '@/components/ui/ConfirmModal';
 
 export default function IdentityManagementPage() {
   const [users, setUsers] = useState<Profile[]>([]);
+  const [subscribers, setSubscribers] = useState<Profile[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [activeTab, setActiveTab] = useState<'staff' | 'subscribers'>('staff');
   const [showAddModal, setShowAddModal] = useState(false);
   const { showNotification } = useNotification();
   const router = useRouter();
@@ -82,16 +84,17 @@ export default function IdentityManagementPage() {
   const fetchUsers = async () => {
     setIsLoading(true);
     try {
-      // ✅ FIX: manageUsers() gets the token internally, no need to pass it
       const response = await api.auth.manageUsers('list', {});
-      // Fallback for mock if API not ready
-      setUsers(response || [
-        { id: '1', full_name: 'Admin Principal', email: 'admin@kvk.fr', role: 'admin' },
-        { id: '2', full_name: 'Marc Terrain', email: 'marc@kvk.fr', role: 'editor' },
-        { id: '3', full_name: 'Sophie Chiffre', email: 'sophie@kvk.fr', role: 'author' },
-      ]);
+      const all: Profile[] = response || [];
+      setUsers(all.filter((u: Profile) => ['admin', 'editor', 'author'].includes(u.role)));
+      setSubscribers(all.filter((u: Profile) => !['admin', 'editor', 'author'].includes(u.role)));
     } catch (err) {
       console.error(err);
+      // fallback direct Supabase
+      const { data } = await supabase.from('profiles').select('*');
+      const all = data || [];
+      setUsers(all.filter((u: any) => ['admin', 'editor', 'author'].includes(u.role)));
+      setSubscribers(all.filter((u: any) => !['admin', 'editor', 'author'].includes(u.role)));
     } finally {
       setIsLoading(false);
     }
@@ -194,18 +197,72 @@ export default function IdentityManagementPage() {
     );
   }
 
+  const UserRow = ({ u, showEdit = true }: { u: Profile; showEdit?: boolean }) => (
+    <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
+      <td className="px-4 md:px-8 py-4 md:py-6">
+        <div className="flex items-center gap-3 md:gap-4">
+          <div className="shrink-0 w-8 h-8 md:w-10 md:h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-black text-[10px] md:text-xs uppercase">
+            {(u.full_name || u.email || 'U').charAt(0)}
+          </div>
+          <span className="font-black text-sm tracking-tight uppercase italic truncate max-w-[120px] md:max-w-none">{u.full_name || u.email || 'Membre'}</span>
+        </div>
+      </td>
+      <td className="px-4 md:px-8 py-4 md:py-6">
+        <span className={`px-2.5 md:px-4 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 w-fit ${
+          u.role === 'admin' ? 'bg-black text-white' :
+          u.role === 'editor' ? 'bg-primary text-white' :
+          u.role === 'author' ? 'bg-gray-100 text-gray-500' :
+          'bg-blue-50 text-blue-500'
+        }`}>
+          {u.role === 'admin' && <Shield className="w-3 h-3" />}
+          {u.role === 'editor' && <Edit2 className="w-3 h-3" />}
+          {u.role === 'author' && <User className="w-3 h-3" />}
+          {u.role || 'reader'}
+        </span>
+      </td>
+      <td className="px-4 md:px-8 py-4 md:py-6 font-mono text-[10px] text-gray-400 truncate max-w-[120px] md:max-w-none">{u.email}</td>
+      <td className="px-4 md:px-8 py-4 md:py-6 text-right">
+        <div className="flex justify-end gap-1 md:gap-2 md:opacity-0 group-hover:opacity-100 transition-opacity">
+          {showEdit && (
+            <button onClick={() => handleEditUser(u)} className="p-2 text-gray-400 hover:text-gray-900 transition-colors border border-gray-50 md:border-transparent hover:border-gray-100 rounded-full">
+              <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+            </button>
+          )}
+          <button onClick={() => handleDeleteUser(u.id, u.full_name || u.email || '')} className="p-2 text-gray-400 hover:text-red-600 transition-colors border border-gray-50 md:border-transparent hover:border-red-100 rounded-full">
+            <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
+          </button>
+        </div>
+      </td>
+    </tr>
+  );
+
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 md:mb-16 border-b-4 border-gray-900 pb-8 gap-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 border-b-4 border-gray-900 pb-8 gap-6">
         <div>
           <span className="text-[10px] md:text-xs font-black uppercase tracking-[0.4em] text-primary">Contrôle d'Accès</span>
           <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tighter italic leading-none">Gestion des Identités</h1>
         </div>
-        <button 
-          onClick={() => setShowAddModal(true)}
-          className="w-full md:w-auto bg-gray-900 text-white px-6 md:px-8 py-4 md:py-4 font-black uppercase tracking-widest text-[10px] md:text-[11px] hover:bg-primary transition-all shadow-xl flex items-center justify-center gap-3"
+        {activeTab === 'staff' && (
+          <button onClick={() => setShowAddModal(true)} className="w-full md:w-auto bg-gray-900 text-white px-6 py-4 font-black uppercase tracking-widest text-[10px] hover:bg-primary transition-all shadow-xl flex items-center justify-center gap-3">
+            <UserPlus className="w-4 h-4" /> Recruter un collaborateur
+          </button>
+        )}
+      </div>
+
+      {/* Onglets */}
+      <div className="flex gap-1 mb-6 bg-gray-50 p-1 rounded-xl w-fit">
+        <button
+          onClick={() => setActiveTab('staff')}
+          className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${activeTab === 'staff' ? 'bg-gray-900 text-white shadow' : 'text-gray-400 hover:text-gray-700'}`}
         >
-          <UserPlus className="w-4 h-4" /> Recruter un collaborateur
+          Staff <span className="ml-1.5 opacity-60">({users.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab('subscribers')}
+          className={`px-5 py-2.5 text-[10px] font-black uppercase tracking-widest rounded-lg transition-all ${activeTab === 'subscribers' ? 'bg-gray-900 text-white shadow' : 'text-gray-400 hover:text-gray-700'}`}
+        >
+          Abonnés <span className="ml-1.5 opacity-60">({subscribers.length})</span>
         </button>
       </div>
 
@@ -221,49 +278,16 @@ export default function IdentityManagementPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users.map((u) => (
-                <tr key={u.id} className="hover:bg-gray-50/50 transition-colors group">
-                  <td className="px-4 md:px-8 py-4 md:py-6">
-                    <div className="flex items-center gap-3 md:gap-4">
-                      <div className="shrink-0 w-8 h-8 md:w-10 md:h-10 bg-gray-900 rounded-full flex items-center justify-center text-white font-black text-[10px] md:text-xs uppercase">
-                        {(u.full_name || u.email || 'U').charAt(0)}
-                      </div>
-                      <span className="font-black text-sm md:text-lg tracking-tight uppercase italic truncate max-w-[120px] md:max-w-none">{u.full_name || u.email || 'Unknown User'}</span>
-                    </div>
-                  </td>
-                  <td className="px-4 md:px-8 py-4 md:py-6">
-                    <span className={`px-2.5 md:px-4 py-1.5 text-[8px] md:text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-2 w-fit ${
-                      u.role === 'admin' ? 'bg-black text-white' : 
-                      u.role === 'editor' ? 'bg-primary text-white shadow-[0_4px_15px_rgba(196,18,46,0.3)]' : 
-                      'bg-gray-100 text-gray-500'
-                    }`}>
-                      {u.role === 'admin' && <Shield className="w-3 h-3" />}
-                      {u.role === 'editor' && <Edit2 className="w-3 h-3" />}
-                      {u.role === 'author' && <User className="w-3 h-3" />}
-                      {u.role}
-                    </span>
-                  </td>
-                  <td className="px-4 md:px-8 py-4 md:py-6 font-mono text-[10px] text-gray-400 truncate max-w-[120px] md:max-w-none">{u.email}</td>
-                  <td className="px-4 md:px-8 py-4 md:py-6 text-right">
-                    <div className="flex justify-end gap-1 md:gap-2 md:opacity-0 group-hover:opacity-100 transition-opacity">
-                      <button 
-                        onClick={() => handleEditUser(u)}
-                        className="p-2 text-gray-400 hover:text-gray-900 transition-colors border border-gray-50 md:border-transparent hover:border-gray-100 rounded-full"
-                        title="Modifier"
-                      >
-                        <Edit2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                      </button>
-                      <button 
-                        onClick={() => handleDeleteUser(u.id, u.full_name || u.email || '')}
-                        className="p-2 text-gray-400 hover:text-red-600 transition-colors border border-gray-50 md:border-transparent hover:border-red-100 rounded-full"
-                        title="Supprimer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 md:w-4 md:h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
+              {activeTab === 'staff'
+                ? users.map((u) => <UserRow key={u.id} u={u} showEdit={true} />)
+                : subscribers.map((u) => <UserRow key={u.id} u={u} showEdit={false} />)
+              }
+              {activeTab === 'staff' && users.length === 0 && (
+                <tr><td colSpan={4} className="px-8 py-12 text-center text-gray-400 text-sm font-serif italic">Aucun membre du staff</td></tr>
+              )}
+              {activeTab === 'subscribers' && subscribers.length === 0 && (
+                <tr><td colSpan={4} className="px-8 py-12 text-center text-gray-400 text-sm font-serif italic">Aucun abonné pour l'instant</td></tr>
+              )}
             </tbody>
           </table>
         </div>

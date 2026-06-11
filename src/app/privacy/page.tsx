@@ -7,7 +7,7 @@ export default function PrivacyPage() {
         <section>
           <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-6">Qui sommes-nous ?</h2>
           <p>
-            L’adresse de notre site est : <strong>https://kvkfootball.com</strong>.
+            L’adresse de notre site est : <strong>https://kvk-football.com</strong>.
           </p>
         </section>
 

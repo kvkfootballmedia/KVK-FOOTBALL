@@ -7,7 +7,7 @@ export default function LegalPage() {
         <section>
           <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-6">1. Édition du site</h2>
           <p>
-            Le présent site, accessible à l’URL <strong>www.kvkfootball.com</strong>, est édité par :<br />
+            Le présent site, accessible à l’URL <strong>www.kvk-football.com</strong>, est édité par :<br />
             <strong>Collectif KVK Media</strong>, association loi 1901 immatriculée au R.P.A de Paris.<br />
             Siège social : 12 Rue du Ballon Rond, 75000 Paris.<br />
             Directeur de la publication : Équipe KVK Football.

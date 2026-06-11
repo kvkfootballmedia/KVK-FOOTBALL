@@ -41,7 +41,7 @@ export default function TermsPage() {
         <section>
           <h2 className="text-2xl font-black uppercase tracking-tight text-gray-900 mb-6">5. Liens hypertextes</h2>
           <p>
-            Des liens hypertextes peuvent être présents sur le site. L’Utilisateur est informé qu’en cliquant sur ces liens, il sortira du site <strong>kvkfootball.com</strong>. Ce dernier n’a pas de contrôle sur les pages web sur lesquelles aboutissent ces liens et ne saurait, en aucun cas, être responsable de leur contenu.
+            Des liens hypertextes peuvent être présents sur le site. L’Utilisateur est informé qu’en cliquant sur ces liens, il sortira du site <strong>kvk-football.com</strong>. Ce dernier n’a pas de contrôle sur les pages web sur lesquelles aboutissent ces liens et ne saurait, en aucun cas, être responsable de leur contenu.
           </p>
         </section>
 

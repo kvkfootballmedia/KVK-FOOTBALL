@@ -119,6 +119,22 @@ export default function AdminStats() {
         </div>
       </div>
 
+      {/* Google Analytics — Looker Studio */}
+      <div className="mb-8 bg-white rounded-xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+          <TrendingUp className="w-4 h-4 text-primary" />
+          <span className="text-[10px] font-black uppercase tracking-widest text-gray-700">Google Analytics</span>
+        </div>
+        <div className="w-full" style={{ height: 450 }}>
+          <iframe
+            src="https://datastudio.google.com/embed/reporting/719ed50d-d0a5-49e7-ab71-59a34bcc9c38/page/EC10F"
+            className="w-full h-full border-0"
+            allowFullScreen
+            sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+          />
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
 

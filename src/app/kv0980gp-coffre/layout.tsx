@@ -87,10 +87,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen bg-white flex flex-col md:flex-row">
       {/* Admin Sidebar Navigation */}
       <aside className="w-full md:w-72 bg-gray-900 text-white flex flex-col p-6 md:p-8 border-r border-gray-900 shrink-0">
-        <div className="mb-8 md:mb-12">
+        <div className="mb-4 md:mb-6">
           <span className="text-[9px] md:text-[10px] font-black uppercase tracking-[0.4em] text-primary block mb-1 md:mb-2">Terminal</span>
           <h2 className="text-xl md:text-2xl font-black uppercase tracking-tighter italic">KVK Rédaction</h2>
         </div>
+
+        <Link
+          href="/"
+          className="hidden md:flex items-center gap-3 px-4 py-2.5 mb-6 text-[10px] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/5 border border-emerald-500/20 rounded transition-all"
+        >
+          Voir le site
+        </Link>
 
         <nav className="flex md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
           <Link 
@@ -162,13 +169,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 </p>
              </div>
           </div>
-          <Link
-            href="/"
-            className="flex items-center gap-4 px-4 py-3 mb-2 w-full text-[10px] font-black uppercase tracking-widest text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/5 border border-emerald-500/20 rounded transition-all"
-          >
-            Voir le site
-          </Link>
-          <button 
+          <button
             onClick={handleLogout}
             className="flex items-center gap-4 px-4 py-3 w-full text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-red-500 hover:bg-red-500/5 transition-all"
           >
