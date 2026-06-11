@@ -18,7 +18,7 @@ const roboto = Roboto({
 
 export const metadata: Metadata = {
   title: "KVK Football | L'Actualité du Football au Carré",
-  description: "Actualité, analyses et résultats en direct. Le meilleur du football national et international.",
+  description: "L'actualité du Football comme nulle part ailleurs.",
   icons: {
     icon: [
       { url: '/LOGO KVK.png', sizes: '32x32', type: 'image/png' },
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "KVK Football",
-    description: "Le football raconté avec précision et passion.",
+    description: "L'actualité du Football comme nulle part ailleurs.",
     type: "website",
     locale: "fr_FR",
   },
