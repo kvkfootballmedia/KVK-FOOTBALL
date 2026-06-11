@@ -33,10 +33,26 @@ export const metadata: Metadata = {
     ],
   },
   openGraph: {
-    title: "KVK Football",
+    title: "KVK Football | L'Actualité du Football au Carré",
     description: "L'actualité du Football comme nulle part ailleurs.",
     type: "website",
     locale: "fr_FR",
+    url: "https://kvk-football.com",
+    siteName: "KVK Football",
+    images: [
+      {
+        url: "https://kvk-football.com/LOGO KVK.png",
+        width: 512,
+        height: 512,
+        alt: "KVK Football",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "KVK Football | L'Actualité du Football au Carré",
+    description: "L'actualité du Football comme nulle part ailleurs.",
+    images: ["https://kvk-football.com/LOGO KVK.png"],
   },
 };
 
