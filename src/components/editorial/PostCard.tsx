@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Post } from '@/types';
 import { Clock } from 'lucide-react';
 
@@ -20,9 +21,9 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
       <article className="group grid grid-cols-1 md:grid-cols-12 gap-0 border-2 border-secondary bg-white hover:border-primary transition-colors">
         {/* Image */}
         <div className="md:col-span-8 relative aspect-[16/9] overflow-hidden bg-gray-900 border-b md:border-b-0 md:border-r border-secondary">
-          <Link href={`/article/${slug}`} className="block w-full h-full">
+          <Link href={`/article/${slug}`} className="block w-full h-full relative">
             {featured_image ? (
-              <img src={featured_image} alt={title || ''} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 group-hover:opacity-100" />
+              <Image src={featured_image} alt={title || ''} fill className="object-cover group-hover:scale-105 transition-transform duration-700 ease-out opacity-90 group-hover:opacity-100" />
             ) : (
               <div className="w-full h-full flex items-center justify-center text-gray-700 font-heading font-black text-4xl bg-gray-900 tracking-widest">KVK</div>
             )}
@@ -67,7 +68,7 @@ export default function PostCard({ post, featured = false }: PostCardProps) {
       {/* Thumbnail */}
       <Link href={`/article/${slug}`} className="relative shrink-0 aspect-[16/9] overflow-hidden bg-gray-900 border-b border-gray-200 block">
         {featured_image ? (
-          <img src={featured_image} alt={title || ''} className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-500 ease-out opacity-95 group-hover:opacity-100" />
+          <Image src={featured_image} alt={title || ''} fill className="object-cover group-hover:scale-105 transition-transform duration-500 ease-out opacity-95 group-hover:opacity-100" />
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-gray-900 text-gray-700 font-heading font-black text-2xl tracking-widest">KVK</div>
         )}

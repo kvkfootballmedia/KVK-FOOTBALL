@@ -239,6 +239,23 @@ export const api = {
       });
     },
   },
+
+  /**
+   * 🔐 ADMIN : Activites du CMS
+   */
+  admin: {
+    getActivities: async (limit = 50) => {
+      const { data, error } = await supabase
+        .from('admin_activities')
+        .select('id, action, entity_type, entity_id, details, created_at, user:profiles!admin_activities_user_id_fkey(full_name, role)')
+        .order('created_at', { ascending: false })
+        .limit(limit);
+
+      if (error) throw error;
+      return data ?? [];
+    }
+  },
+
   /**
    * 📁 STORAGE : Gestion des fichiers
    */

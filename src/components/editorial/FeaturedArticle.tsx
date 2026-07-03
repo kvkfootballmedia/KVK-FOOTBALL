@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface FeaturedArticleProps {
   id: string;
@@ -19,10 +20,11 @@ export default function FeaturedArticle({ article }: { article: FeaturedArticleP
       <div className="relative h-96 overflow-hidden rounded-lg group cursor-pointer shadow-lg">
         {/* Image */}
         {article.featured_image ? (
-          <img
+          <Image
             src={article.featured_image}
             alt={article.title}
-            className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+            fill
+            className="object-cover group-hover:scale-105 transition duration-300"
           />
         ) : (
           <div className="w-full h-full bg-gradient-to-br from-red-600 to-red-800" />

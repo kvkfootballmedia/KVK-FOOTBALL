@@ -112,15 +112,27 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
             <Layout className="w-5 h-5 text-primary" />
             <h2 className="text-xl font-black uppercase tracking-tighter italic">Informations Editoriales</h2>
           </div>
-          {initialData.slug && (
-            <a
-              href={`/article/${initialData.slug}`}
-              target="_blank"
-              className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-primary transition-colors"
-            >
-              <Eye className="w-4 h-4" /> Voir l'article
-            </a>
-          )}
+          <div className="flex items-center gap-4">
+            {initialData.id && (
+              <a
+                href={`/preview/${initialData.id}`}
+                target="_blank"
+                className="flex items-center gap-2 px-3 py-1.5 bg-yellow-400/10 text-yellow-600 hover:bg-yellow-400 hover:text-black rounded-full text-[10px] font-black uppercase tracking-widest transition-all"
+                title="Previsualiser l'article (Brouillon)"
+              >
+                <Eye className="w-3.5 h-3.5" /> Previsualiser
+              </a>
+            )}
+            {initialData.slug && (
+              <a
+                href={`/article/${initialData.slug}`}
+                target="_blank"
+                className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-primary transition-colors"
+              >
+                <Globe className="w-4 h-4" /> Voir l'article publie
+              </a>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-6">

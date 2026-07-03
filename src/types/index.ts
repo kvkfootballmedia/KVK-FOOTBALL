@@ -31,6 +31,8 @@ export interface Post {
   slug: string;
   excerpt: string | null;
   featured_image: string | null;
+  featured_image_focal_x?: number;
+  featured_image_focal_y?: number;
   status: ContentStatus;
   published_at: string;
   is_featured: boolean;
