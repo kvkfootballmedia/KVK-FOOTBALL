@@ -76,7 +76,7 @@ ALTER TABLE public.post_blocks DROP CONSTRAINT IF EXISTS post_blocks_block_type_
 
 -- E. Ajout de la nouvelle contrainte CHECK pour les types de bloc acceptés par l'éditeur
 ALTER TABLE public.post_blocks ADD CONSTRAINT post_blocks_block_type_check 
-  CHECK (block_type IN ('paragraph', 'heading', 'image', 'quote', 'list', 'embed', 'html'));
+  CHECK (block_type IN ('paragraph', 'heading', 'image', 'quote', 'list', 'embed', 'html', 'short_video'));
 
 
 -- 6) RLS & POLICIES (Sécurité des tables)
@@ -177,5 +177,54 @@ CREATE POLICY "post_blocks_write_for_editors_and_owner"
         AND (public.can_manage_content() OR p.author_id = auth.uid())
     )
   );
+
+-- 7) MIGRATION DE LA TABLE : admin_activities
+CREATE TABLE IF NOT EXISTS public.admin_activities (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  action text NOT NULL,
+  entity_type text NOT NULL,
+  entity_id uuid,
+  details jsonb,
+  created_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.admin_activities ENABLE ROW LEVEL SECURITY;
+
+-- Les admins peuvent lire toutes les activites
+DROP POLICY IF EXISTS "admin_activities_select_all" ON public.admin_activities;
+CREATE POLICY "admin_activities_select_all"
+  ON public.admin_activities FOR SELECT
+  TO authenticated
+  USING (public.can_manage_content());
+
+-- Les admins peuvent creer des activites
+DROP POLICY IF EXISTS "admin_activities_insert" ON public.admin_activities;
+CREATE POLICY "admin_activities_insert"
+  ON public.admin_activities FOR INSERT
+  TO authenticated
+  WITH CHECK (public.can_manage_content() OR public.is_author());
+
+-- 8) MIGRATION DE LA TABLE : post_views
+CREATE TABLE IF NOT EXISTS public.post_views (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  post_id uuid REFERENCES public.posts(id) ON DELETE CASCADE,
+  viewed_at timestamp with time zone DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+ALTER TABLE public.post_views ENABLE ROW LEVEL SECURITY;
+
+-- Autoriser tout le monde (y compris les visiteurs non connectes) a inserer une vue
+DROP POLICY IF EXISTS "post_views_insert_public" ON public.post_views;
+CREATE POLICY "post_views_insert_public"
+  ON public.post_views FOR INSERT
+  WITH CHECK (true);
+
+-- Seuls les administrateurs peuvent lire les vues (pour les stats)
+DROP POLICY IF EXISTS "post_views_select_admin" ON public.post_views;
+CREATE POLICY "post_views_select_admin"
+  ON public.post_views FOR SELECT
+  TO authenticated
+  USING (public.can_manage_content());
 
 COMMIT;
