@@ -2,8 +2,9 @@ import { Post } from '../types';
 import { supabase } from '@/lib/supabaseClient'; // 👈 client Supabase comme SOKO
 import { STORAGE_BUCKETS, generateStoragePath } from '@/lib/storageConfig';
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
-const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const SUPABASE_URL           = process.env.NEXT_PUBLIC_SUPABASE_URL || '';
+const SUPABASE_ANON_KEY      = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '';
+const SUPABASE_FUNCTIONS_URL = process.env.NEXT_PUBLIC_SUPABASE_FUNCTIONS_URL || '';
 
 /** --- AUTH UTILS --- */
 
@@ -20,11 +21,11 @@ async function getAccessToken(): Promise<string | null> {
  * Appel Edge Function (réservé aux edges admin/sensibles)
  */
 async function callEdgeFunction<T>(path: string, options: RequestInit = {}): Promise<T> {
-  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  if (!SUPABASE_FUNCTIONS_URL || !SUPABASE_ANON_KEY) {
     throw new Error('ENV_NOT_CONFIGURED');
   }
 
-  const url = `${SUPABASE_URL}/functions/v1/${path}`;
+  const url = `${SUPABASE_FUNCTIONS_URL}/${path}`;
 
   const response = await fetch(url, {
     ...options,
@@ -247,7 +248,7 @@ export const api = {
     getActivities: async (limit = 50) => {
       const { data, error } = await supabase
         .from('admin_activities')
-        .select('id, action, entity_type, entity_id, details, created_at, user:profiles!admin_activities_user_id_fkey(full_name, role)')
+        .select('id, action, entity_type, entity_id, details, created_at, user:profiles(full_name, role)')
         .order('created_at', { ascending: false })
         .limit(limit);
 
@@ -261,7 +262,7 @@ export const api = {
    */
   storage: {
     /**
-    * Upload a file to a specific bucket/subfolder.
+    * Upload a file to a specific bucket/subfolder via Cloudflare R2 API route.
     * @param bucketKey - One of the defined bucket constants (e.g., 'ARTICLES_MEDIA')
     * @param subFolder - Sub‑folder inside the bucket (e.g., STORAGE_PATHS.articles.featured)
     */
@@ -273,26 +274,30 @@ export const api = {
       const token = await getAccessToken();
       if (!token) throw new Error('NOT_AUTHENTICATED');
 
-      // Determine bucket name from key
-      const bucket = STORAGE_BUCKETS[bucketKey];
-
-      // 1. Generate a unique path using the helper (category derived from bucket)
+      // 1. Determine category and base path
       const category = bucketKey === 'ARTICLES_MEDIA' ? 'articles' : bucketKey === 'USER_MEDIA' ? 'user' : 'static';
       const filePath = generateStoragePath(category as any, subFolder, file.name);
 
-      // 2. Upload to Supabase storage
-      const { error: uploadError } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file);
+      // 3. Upload to our new R2 API Route
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('path', filePath);
 
-      if (uploadError) throw uploadError;
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+        body: formData,
+      });
 
-      // 3. Public URL
-      const { data } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(filePath);
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || "Erreur lors de l'upload vers R2");
+      }
 
-      return data.publicUrl;
+      const data = await response.json();
+      return data.url;
     }
   }
 };

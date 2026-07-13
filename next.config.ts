@@ -7,7 +7,7 @@ const nextConfig: NextConfig = {
   typescript: { ignoreBuildErrors: true },
 
   images: {
-    remotePatterns: [{ protocol: 'https', hostname: '**' }],
+    unoptimized: true,
   },
 
   async headers() {
@@ -43,6 +43,12 @@ const nextConfig: NextConfig = {
               "form-action 'self'",
             ].join('; '),
           },
+        ],
+      },
+      {
+        source: '/(.*)\\.(jpg|jpeg|png|webp|gif|svg|ico|woff2)',
+        headers: [
+          { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },
         ],
       },
     ];

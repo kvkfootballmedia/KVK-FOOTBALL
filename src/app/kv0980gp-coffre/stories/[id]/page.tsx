@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect, use } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -228,6 +228,8 @@ export default function AdminStorySlides({ params }: { params: Promise<{ id: str
                     <ImageUpload 
                       label="Visuel de la slide"
                       value={newSlide.media_url}
+                      bucketKey="ARTICLES_MEDIA"
+                      subFolder="blocks"
                       onChange={(url) => setNewSlide({...newSlide, media_url: url})}
                     />
                  </div>

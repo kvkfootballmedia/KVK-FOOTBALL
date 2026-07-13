@@ -17,9 +17,10 @@ export default function ActivityFeed() {
     try {
       setLoading(true);
       const data = await api.admin.getActivities(15);
+      console.log('RAW ACTIVITIES DATA:', JSON.stringify(data, null, 2));
       setActivities(data);
-    } catch (err) {
-      console.error('Error fetching activities:', err);
+    } catch (err: any) {
+      console.error('Error fetching activities DETAILS:', err.message, err.details, err.hint, err);
     } finally {
       setLoading(false);
     }
@@ -62,7 +63,7 @@ export default function ActivityFeed() {
                       {getActionIcon(activity.action)}
                       <p className="text-xs font-bold text-gray-900">
                         <span className="text-primary font-black uppercase tracking-widest mr-1 text-[10px]">
-                          {activity.user?.full_name || 'Anonyme'}
+                          {(Array.isArray(activity.user) ? activity.user[0]?.full_name : activity.user?.full_name) || 'Anonyme'}
                         </span>
                         {activity.action}
                       </p>

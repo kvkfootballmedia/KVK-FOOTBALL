@@ -1,3 +1,5 @@
+export const revalidate = 120; // ISR: revalider toutes les 2 minutes
+
 import NewsFeed from "@/components/editorial/NewsFeed";
 import PromoBanner from "@/components/layout/PromoBanner";
 import FlagStrip from "@/components/layout/FlagStrip";

@@ -153,6 +153,8 @@ export default function ArticleForm({ initialData = {}, onSave, onDelete, userRo
             <ImageUpload
               label="Image de Couverture (Une)"
               value={formData.featured_image ?? ''}
+              bucketKey="ARTICLES_MEDIA"
+              subFolder="featured"
               onChange={(url) => {
                 setFormData(prev => ({ ...prev, featured_image: url, featured_image_focal_x: 50, featured_image_focal_y: 50 }));
                 setShowFocalPoint(false);

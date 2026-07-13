@@ -3,7 +3,7 @@
     import Link from "next/link";
     
     // Force dynamic rendering since we fetch data
-    export const dynamic = 'force-dynamic';
+    export const revalidate = 300; // ISR: revalider toutes les 5 minutes
 
     export default async function CategoryPage({ params }: { params: Promise<{ slug: string }> }) {
       const { slug } = await params;

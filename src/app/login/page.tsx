@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
@@ -170,7 +170,7 @@ export default function LoginPage() {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   className="w-full px-6 py-4 bg-gray-50 border border-gray-100 rounded-2xl focus:border-primary focus:bg-white transition-all outline-none font-bold text-sm"
-                  placeholder="Jean Dupont"
+                  placeholder="Votre nom"
                 />
               </div>
             )}

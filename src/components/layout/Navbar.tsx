@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import Link from 'next/link';
 import Image from 'next/image';
@@ -91,7 +91,7 @@ export default function Navbar() {
                 </button>
 
                 {openDropdown === 'competitions' && (
-                  <div className="absolute left-1/2 -translate-x-1/2 mt-2 w-64 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200 before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:content-['']">
                     <div className="py-1 px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#1E293B]">Compétitions majeures</div>
                     <div className="flex flex-col gap-0.5">
                       {competitions.map(comp => (
@@ -118,7 +118,7 @@ export default function Navbar() {
                 </button>
 
                 {openDropdown === 'more' && (
-                  <div className="absolute left-0 mt-2 w-56 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="absolute left-0 top-full mt-2 w-56 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200 before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:content-['']">
                     <div className="py-1 px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#1E293B]">Autres Rubriques</div>
                     <div className="flex flex-col gap-0.5">
                       {extraNav.map(item => (
@@ -177,6 +177,7 @@ export default function Navbar() {
                 <Link
                   key={item.name}
                   href={item.href}
+                  onClick={() => setMobileMenuOpen(false)}
                   className="block px-4 py-2.5 text-sm font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-colors"
                 >
                   {item.name}
@@ -189,6 +190,7 @@ export default function Navbar() {
                   <Link
                     key={item.name}
                     href={item.href}
+                    onClick={() => setMobileMenuOpen(false)}
                     className="block px-4 py-2 text-sm font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-colors"
                   >
                     {item.name}
@@ -203,6 +205,7 @@ export default function Navbar() {
                     <Link
                       key={comp.slug}
                       href={`/championship/${comp.slug}`}
+                      onClick={() => setMobileMenuOpen(false)}
                       className="text-xs font-semibold text-[#94A3B8] hover:text-red-500 py-1"
                     >
                       {comp.name}
@@ -214,6 +217,7 @@ export default function Navbar() {
               <div className="mt-4 pt-4 border-t border-[#1E293B] px-4">
                 <Link
                   href="/login"
+                  onClick={() => setMobileMenuOpen(false)}
                   className="flex items-center justify-center gap-2 w-full py-2.5 bg-[#1E293B] border border-[#334155] text-sm font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 hover:border-red-900/50 rounded-xl transition-all"
                 >
                   <User size={16} />

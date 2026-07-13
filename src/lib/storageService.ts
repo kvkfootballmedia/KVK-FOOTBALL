@@ -348,7 +348,7 @@ function handleUploadError(error: any): UploadError {
   if (error.message.includes('FILE_TOO_LARGE')) {
     return {
       code: 'FILE_TOO_LARGE',
-      message: 'Fichier trop volumineux. Maximum 5 MB.',
+      message: 'Fichier trop volumineux. Maximum 3 MB.',
     };
   }
 

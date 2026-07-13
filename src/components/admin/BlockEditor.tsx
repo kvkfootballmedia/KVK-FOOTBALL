@@ -268,6 +268,8 @@ export default function BlockEditor({ blocks, onChange }: BlockEditorProps) {
                       <ImageUpload 
                         label="Image du bloc"
                         value={block.content.url}
+                        bucketKey="ARTICLES_MEDIA"
+                        subFolder="blocks"
                         onChange={(url) => updateBlockContent(index, { url })}
                       />
                     </div>

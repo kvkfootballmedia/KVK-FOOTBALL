@@ -30,8 +30,8 @@ export default function PromoBanner() {
 
     fetchFeatured();
 
-    // Calculate days left until June 11, 2026
-    const target = new Date('2026-06-11T00:00:00');
+    // Calculate days left until July 19, 2026 (Final)
+    const target = new Date('2026-07-19T00:00:00');
     const now = new Date();
     const diffTime = target.getTime() - now.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -90,14 +90,11 @@ export default function PromoBanner() {
             </div>
           ) : (
             <div className="text-center">
-              <div className="text-[8px] md:text-sm font-heading font-bold text-gray-500 uppercase tracking-widest mb-1">
-                DANS
+              <div className="text-2xl md:text-5xl font-heading font-black text-primary leading-none">
+                J-{daysLeft}
               </div>
-              <div className="text-2xl md:text-6xl font-heading font-black text-primary leading-none">
-                {daysLeft}
-              </div>
-              <div className="text-[9px] md:text-xl font-heading font-black text-secondary uppercase">
-                JOURS
+              <div className="text-[9px] md:text-sm font-heading font-black text-secondary uppercase mt-1 tracking-widest">
+                AVANT LA FINALE
               </div>
             </div>
           )}

@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabaseClient';
@@ -184,6 +184,8 @@ export default function AdminStories() {
                  <ImageUpload 
                    label="URL Cover Image (Bulle)"
                    value={newCoverUrl}
+                   bucketKey="ARTICLES_MEDIA"
+                   subFolder="thumbnails"
                    onChange={(url) => setNewCoverUrl(url)}
                  />
               </div>

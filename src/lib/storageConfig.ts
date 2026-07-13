@@ -79,7 +79,7 @@ export function getBucketForContent(type: 'article' | 'user' | 'static'): string
  */
 export const FILE_VALIDATION = {
   images: {
-    maxSize: 5 * 1024 * 1024, // 5 MB
+    maxSize: 3 * 1024 * 1024, // 3 MB
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif'],
     extensions: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
   },
