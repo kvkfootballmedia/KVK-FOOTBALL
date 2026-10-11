@@ -9,6 +9,19 @@ function sanitize(html: string): string {
     .replace(/\son\w+\s*=\s*["'][^"']*["']/gi, "")
     .replace(/javascript\s*:/gi, "");
 }
+
+// Chaque retour à la ligne saisi en admin = un nouveau paragraphe.
+// Si le texte contient déjà du HTML de bloc, on le laisse tel quel.
+function formatParagraph(text: string): string {
+  const clean = sanitize(text || "");
+  if (/<(p|div|br|ul|ol|li|h[1-6]|blockquote)\b/i.test(clean)) return clean;
+  return clean
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => `<p class="mb-6 last:mb-0">${l}</p>`)
+    .join("");
+}
 import { Post, PostBlock } from "@/types";
 import { supabase } from "@/lib/supabaseClient";
 import RelatedArticles from "@/components/editorial/RelatedArticles";
@@ -31,16 +44,16 @@ const BlockRenderer = ({ block }: { block: PostBlock }) => {
       return (
         <div
           className="font-serif text-base md:text-xl leading-relaxed text-gray-800 mb-10 prose prose-lg prose-gray max-w-none"
-          dangerouslySetInnerHTML={{ __html: sanitize(content.text || "") }}
+          dangerouslySetInnerHTML={{ __html: formatParagraph(content.text || "") }}
         />
       );
     case "heading":
       return content.level === 3 ? (
-        <h3 className="font-black text-3xl md:text-4xl mt-16 mb-8 tracking-tighter italic border-b-2 border-gray-900 pb-2 inline-block">
+        <h3 className="font-black text-3xl md:text-4xl mt-16 mb-8 tracking-tighter border-b-2 border-gray-900 pb-2 inline-block">
           {content.text}
         </h3>
       ) : (
-        <h2 className="font-black text-3xl md:text-4xl mt-16 mb-8 tracking-tighter italic border-b-2 border-gray-900 pb-2 inline-block">
+        <h2 className="font-black text-3xl md:text-4xl mt-16 mb-8 tracking-tighter border-b-2 border-gray-900 pb-2 inline-block">
           {content.text}
         </h2>
       );
