@@ -80,14 +80,13 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 gtag('config', 'G-NXBBC5SQM8');`}
         </Script>
-        {process.env.NEXT_PUBLIC_ADSENSE_PUB_ID && (
-          <Script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${process.env.NEXT_PUBLIC_ADSENSE_PUB_ID}`}
-            strategy="afterInteractive"
-            crossOrigin="anonymous"
-          />
-        )}
+        <meta name="google-adsense-account" content="ca-pub-2960298571069732" />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
+          async
+          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2960298571069732"
+          crossOrigin="anonymous"
+        />
       </head>
       <body
         className={`${oswald.variable} ${roboto.variable} font-sans antialiased bg-gray-50 text-gray-900 min-h-screen flex flex-col`}

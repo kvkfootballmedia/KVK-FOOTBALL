@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-import Image from 'next/image';
 import { useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { ChevronDown, Menu, X, User, Search } from 'lucide-react';
@@ -58,15 +57,6 @@ export default function Navbar() {
           <div className="flex items-center justify-between h-16 lg:h-20">
             <Link href="/" className="shrink-0 text-xl lg:text-2xl font-black tracking-tighter flex items-center gap-1.5 mr-8 lg:mr-12">
               <span className="text-red-500 bg-red-950/40 px-2.5 py-1 rounded-lg border border-red-900/50 transition-all hover:bg-red-500 hover:text-white">KVK</span>
-              <div className="animate-trophy-glow relative">
-                <Image
-                  src="/cdm coupe.png"
-                  alt="Coupe du Monde"
-                  width={24}
-                  height={24}
-                  className="object-contain drop-shadow-[0_0_6px_rgba(251,191,36,0.6)]"
-                />
-              </div>
               <span className="text-white font-bold">FOOTBALL</span>
             </Link>
 
