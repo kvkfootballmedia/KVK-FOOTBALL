@@ -46,6 +46,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        source: '/championship/:path*',
+        headers: [
+          { key: 'X-Robots-Tag', value: 'noindex, nofollow' },
+        ],
+      },
+      {
         source: '/(.*)\\.(jpg|jpeg|png|webp|gif|svg|ico|woff2)',
         headers: [
           { key: 'Cache-Control', value: 'public, max-age=31536000, immutable' },

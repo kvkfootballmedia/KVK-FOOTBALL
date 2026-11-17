@@ -2,15 +2,6 @@ import Link from 'next/link';
 import { Twitter, Facebook, Youtube } from 'lucide-react';
 
 export default function Footer() {
-  const competitions = [
-    { name: 'Ligue des Champions', slug: 'ligue-champions' },
-    { name: 'Premier League', slug: 'premier-league' },
-    { name: 'Ligue 1', slug: 'ligue-1' },
-    { name: 'La Liga', slug: 'la-liga' },
-    { name: 'Serie A', slug: 'serie-a' },
-    { name: 'Copa Libertadores', slug: 'copa-libertadores' },
-  ];
-
   const sections = [
     { name: 'Actualités', slug: 'actualites' },
     { name: 'Analyses Tactiques', slug: 'analyses-tactiques' },
@@ -24,7 +15,7 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12 lg:gap-16 pb-16 border-b border-[#1E293B]">
           
           {/* Logo & Description */}
-          <div className="md:col-span-5 space-y-6">
+          <div className="md:col-span-6 space-y-6">
             <Link href="/" className="text-2xl font-black tracking-tighter flex items-center">
               <span className="text-red-500 bg-red-950/40 px-3 py-1 rounded-lg border border-red-900/50 mr-1.5">KVK</span>
               <span className="text-white font-bold">FOOTBALL</span>
@@ -65,25 +56,8 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* Compétitions */}
-          <div className="md:col-span-2 space-y-5">
-            <div className="flex items-center gap-2">
-              <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8E7958]">Compétitions</h4>
-            </div>
-            <ul className="space-y-3.5 text-xs font-semibold text-[#94A3B8]">
-              {competitions.slice(0, 4).map(comp => (
-                <li key={comp.slug}>
-                  <Link href={`/championship/${comp.slug}`} className="hover:text-red-500 transition-colors duration-200">
-                    {comp.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-
           {/* Informations */}
-          <div className="md:col-span-2 space-y-5">
+          <div className="md:col-span-3 space-y-5">
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-red-600 rounded-full"></div>
               <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-[#8E7958]">Informations</h4>

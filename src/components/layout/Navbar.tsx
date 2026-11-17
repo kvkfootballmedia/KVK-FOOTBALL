@@ -24,16 +24,6 @@ export default function Navbar() {
     return null;
   }
 
-  const competitions = [
-    { name: 'Ligue des Champions', slug: 'ligue-champions' },
-    { name: 'Premier League', slug: 'premier-league' },
-    { name: 'Ligue 1', slug: 'ligue-1' },
-    { name: 'La Liga', slug: 'la-liga' },
-    { name: 'Serie A', slug: 'serie-a' },
-    { name: 'Bundesliga', slug: 'bundesliga' },
-    { name: 'Copa Libertadores', slug: 'copa-libertadores' },
-  ];
-
   const mainNav = [
     { name: 'Accueil', href: '/' },
     { name: 'Actualités', href: '/category/actualites' },
@@ -70,33 +60,6 @@ export default function Navbar() {
                   {item.name}
                 </Link>
               ))}
-
-              <div
-                className="relative"
-                onMouseEnter={() => setOpenDropdown('competitions')}
-                onMouseLeave={() => setOpenDropdown(null)}
-              >
-                <button className="flex items-center gap-1 text-sm font-semibold text-[#94A3B8] hover:text-red-500 transition-colors duration-200 cursor-pointer">
-                  Compétitions <ChevronDown size={14} className={`transition-transform duration-200 ${openDropdown === 'competitions' ? 'rotate-180 text-red-500' : ''}`} />
-                </button>
-
-                {openDropdown === 'competitions' && (
-                  <div className="absolute left-1/2 -translate-x-1/2 top-full mt-2 w-64 bg-[#0F172A]/98 backdrop-blur-md shadow-2xl rounded-xl p-3 border border-[#1E293B] animate-in fade-in slide-in-from-top-2 duration-200 before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:content-['']">
-                    <div className="py-1 px-2 mb-1.5 text-[10px] font-bold text-gray-500 uppercase tracking-widest border-b border-[#1E293B]">Compétitions majeures</div>
-                    <div className="flex flex-col gap-0.5">
-                      {competitions.map(comp => (
-                        <Link
-                          key={comp.slug}
-                          href={`/championship/${comp.slug}`}
-                          className="px-3 py-2 text-xs font-semibold text-[#94A3B8] hover:bg-red-950/40 hover:text-red-500 rounded-lg transition-all duration-150"
-                        >
-                          {comp.name}
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
 
               <div
                 className="relative"
@@ -186,22 +149,6 @@ export default function Navbar() {
                     {item.name}
                   </Link>
                 ))}
-              </div>
-
-              <div className="mt-3 px-4 py-2">
-                <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2">Compétitions</p>
-                <div className="grid grid-cols-2 gap-1.5">
-                  {competitions.map(comp => (
-                    <Link
-                      key={comp.slug}
-                      href={`/championship/${comp.slug}`}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-xs font-semibold text-[#94A3B8] hover:text-red-500 py-1"
-                    >
-                      {comp.name}
-                    </Link>
-                  ))}
-                </div>
               </div>
 
               <div className="mt-4 pt-4 border-t border-[#1E293B] px-4">

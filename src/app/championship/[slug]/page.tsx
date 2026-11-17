@@ -1,8 +1,15 @@
-import { use } from 'react';
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ChevronLeft, Trophy, Calendar, Zap } from 'lucide-react';
 import { supabase } from '@/lib/supabaseClient';
 import { footballApi } from '@/services/football';
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function ChampionshipPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Oswald, Roboto } from "next/font/google";
 import "./globals.css";
-import Script from 'next/script';
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 
@@ -64,22 +63,19 @@ export default function RootLayout({
   return (
     <html lang="fr">
       <head>
-        {/* Google Tag Manager */}
-        <Script id="gtm-script" strategy="afterInteractive">
-          {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-})(window,document,'script','dataLayer','GTM-WFRL6VF5');`}
-        </Script>
-        {/* Google Analytics GA4 */}
-        <Script src="https://www.googletagmanager.com/gtag/js?id=G-NXBBC5SQM8" strategy="afterInteractive" />
-        <Script id="ga4-script" strategy="afterInteractive">
-          {`window.dataLayer = window.dataLayer || [];
+        {/* Google Analytics */}
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script
+          async
+          src="https://www.googletagmanager.com/gtm.js?id=GTM-MG3RQPK6"
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config', 'G-NXBBC5SQM8');`}
-        </Script>
+gtag('js', new Date());`,
+          }}
+        />
         <meta name="google-adsense-account" content="ca-pub-2960298571069732" />
         {/* eslint-disable-next-line @next/next/no-sync-scripts */}
         <script
@@ -91,14 +87,6 @@ gtag('config', 'G-NXBBC5SQM8');`}
       <body
         className={`${oswald.variable} ${roboto.variable} font-sans antialiased bg-gray-50 text-gray-900 min-h-screen flex flex-col`}
       >
-        {/* Google Tag Manager (noscript) */}
-        <noscript>
-          <iframe
-            src="https://www.googletagmanager.com/ns.html?id=GTM-WFRL6VF5"
-            height="0" width="0"
-            style={{ display: 'none', visibility: 'hidden' }}
-          />
-        </noscript>
         <Navbar />
 
         <main className="flex-grow">
